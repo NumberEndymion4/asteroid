@@ -12,8 +12,8 @@ namespace Asteroid
 		public GameApp()
 		{
 			graphics = new GraphicsDeviceManager(this);
+			Content.RootDirectory = "data";
 
-			Content.RootDirectory = "Content";
 			IsMouseVisible = true;
 		}
 
