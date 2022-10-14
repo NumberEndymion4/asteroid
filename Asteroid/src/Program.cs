@@ -1,4 +1,6 @@
-﻿namespace Asteroid
+﻿using Asteroid.AppLayer;
+
+namespace Asteroid
 {
 	public static class Program
 	{

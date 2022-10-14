@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Asteroid
+namespace Asteroid.AppLayer
 {
 	public class GameApp : Game
 	{
