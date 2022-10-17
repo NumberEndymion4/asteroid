@@ -1,52 +1,86 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Asteroids.Core;
+using Asteroids.GameLayer;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Asteroid.AppLayer
+namespace Asteroids.AppLayer
 {
 	public class GameApp : Game
 	{
-		private GraphicsDeviceManager graphics;
+		private class KeyStateProvider : IKeyStateProvider
+		{
+			public bool IsPressed(Keys keys)
+			{
+				return Keyboard.GetState().IsKeyDown(keys);
+			}
+		}
+
+		private readonly GraphicsDeviceManager graphics;
+		private readonly IKeyStateProvider keyStateProvider;
+		private readonly GameManager gameManager;
+
 		private SpriteBatch spriteBatch;
+		private Texture2D spaceshipTexture;
+		private Texture2D asteroidTexture;
 
 		public GameApp()
 		{
-			graphics = new GraphicsDeviceManager(this);
-			Content.RootDirectory = "data";
+			graphics = new GraphicsDeviceManager(this) {
+				PreferredBackBufferWidth = Config.Instance.WindowWidth,
+				PreferredBackBufferHeight = Config.Instance.WindowHeight
+			};
 
+			keyStateProvider = new KeyStateProvider();
+			gameManager = new GameManager(Config.Instance, keyStateProvider);
+
+			Content.RootDirectory = "data";
 			IsMouseVisible = true;
 		}
 
 		protected override void Initialize()
 		{
-			// TODO: Add your initialization logic here
-
+			gameManager.Initialize();
 			base.Initialize();
 		}
 
 		protected override void LoadContent()
 		{
 			spriteBatch = new SpriteBatch(GraphicsDevice);
-
-			// TODO: use this.Content to load your game content here
+			spaceshipTexture = Content.Load<Texture2D>("spaceship");
+			asteroidTexture = Content.Load<Texture2D>("asteroid");
 		}
 
 		protected override void Update(GameTime gameTime)
 		{
-			if (Keyboard.GetState().IsKeyDown(Keys.Escape)) {
+			if (keyStateProvider.IsPressed(Keys.Escape)) {
 				Exit();
+			} else {
+				gameManager.Update(gameTime);
 			}
-
-			// TODO: Add your update logic here
 
 			base.Update(gameTime);
 		}
 
 		protected override void Draw(GameTime gameTime)
 		{
-			GraphicsDevice.Clear(Color.CornflowerBlue);
+			GraphicsDevice.Clear(Config.Instance.BackgroundColor);
 
-			// TODO: Add your drawing code here
+			spriteBatch.Begin();
+			foreach (var item in gameManager.GetGameObjects()) {
+				if (item is Spaceship) {
+					spriteBatch.Draw(
+						spaceshipTexture, item.Position, new Rectangle(0, 0, 100, 100), Color.White,
+						item.Rotation, Vector2.One * 50f, item.Scale, SpriteEffects.None, 0.0f
+					);
+				} else {
+					spriteBatch.Draw(
+						asteroidTexture, item.Position, new Rectangle(100, 0, 100, 100), Color.White,
+						item.Rotation, Vector2.One * 50f, item.Scale, SpriteEffects.None, 0.0f
+					);
+				}
+			}
+			spriteBatch.End();
 
 			base.Draw(gameTime);
 		}

@@ -1,6 +1,6 @@
-﻿using Asteroid.AppLayer;
+﻿using Asteroids.AppLayer;
 
-namespace Asteroid
+namespace Asteroids
 {
 	public static class Program
 	{
