@@ -6,8 +6,7 @@ namespace Asteroids.Core
 	{
 		public static Config Instance { get; } = new Config();
 
-		public int WindowWidth = 1024;
-		public int WindowHeight = 768;
+		public Point WindowSize = new Point(1024, 768);
 
 		public Color BackgroundColor = new Color(64, 64, 64);
 

@@ -4,87 +4,91 @@ using Asteroids.Core;
 using Asteroids.GameLayer.Behaviors;
 using Asteroids.Utils;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Asteroids.GameLayer
 {
-	internal class Spaceship : GameObject { }
-	internal class Asteroid : GameObject { }
-
 	internal class GameManager
 	{
-		private readonly List<IGameObject> backgroundItems;
-		private readonly List<Asteroid> asteroids;
-
+		private readonly Dictionary<IGameObject, Func<IPresenter>> presenters;
 		private readonly Config config;
-		private readonly IKeyStateProvider keys;
 
-		private Spaceship spaceship;
+		private IEnvironment environment;
 
-		public GameManager(Config instance, IKeyStateProvider keyStateProvider)
+		public GameManager(Config gameConfig)
 		{
-			config = instance;
-			keys = keyStateProvider;
-
-			backgroundItems = new List<IGameObject>();
-			asteroids = new List<Asteroid>();
+			presenters = new Dictionary<IGameObject, Func<IPresenter>>();
+			config = gameConfig;
 		}
 
-		public void Initialize()
+		public void Initialize(IEnvironment gameEnvironment)
 		{
-			var random = new Random();
+			environment = gameEnvironment;
+
+			for (int i = 0; i < 50; ++i) {
+				presenters.Add(CreateAsteroid(), environment.GetAsteroidPresenter);
+			}
+
+			presenters.Add(
+				CreateSpaceship(environment.GetKeyStateProvider()),
+				environment.GetSpaceshipPresenter
+			);
+		}
+
+		public void Update(GameTime gameTime)
+		{
+			foreach (var (gameObject, _) in presenters) {
+				gameObject.Update(gameTime);
+			}
+		}
+
+		public void Render(SpriteBatch spriteBatch)
+		{
+			foreach (var (gameObject, getPresenter) in presenters) {
+				getPresenter().Render(spriteBatch, gameObject);
+			}
+		}
+
+		private IGameObject CreateSpaceship(IKeyStateProvider keys)
+		{
 			var speedOptions = new KineticMovement.Options {
 				MaxSpeed = 400,
 				Acceleration = 300,
 				Deceleration = 200
 			};
 
-			var windowCenter = new Vector2(config.WindowWidth / 2, config.WindowHeight / 2);
-			spaceship = new Spaceship { Position = windowCenter };
+			var spaceship = new GameObject {
+				Position = config.WindowSize.ToVector2() / 2
+			};
 			spaceship.Behaviors.Add(new InputRotation(spaceship, keys, MathF.PI));
 			spaceship.Behaviors.Add(new KineticMovement(spaceship, keys, speedOptions));
 
-			for (int i = 0; i < 50; ++i) {
-				var asteroid = new Asteroid {
-					Position = windowCenter,
-					Scale = random.NextSingle(0.1f, 1f)
-				};
-
-				float radPerSec =
-					(random.Next(2) == 0 ? -1 : 1) *
-					random.NextSingle(MathF.PI / 24, MathF.PI / 16);
-
-				asteroid.Behaviors.Add(new LinearRotation(asteroid, radPerSec));
-
-				var direction = Vector2.Transform(
-					Vector2.UnitX, Matrix.CreateRotationZ(random.NextSingle() * MathF.Tau)
-				);
-
-				asteroid.Behaviors.Add(
-					new LinearMovement(asteroid, direction, random.NextSingle(5f, 20f))
-				);
-
-				backgroundItems.Add(asteroid);
-			}
+			return spaceship;
 		}
 
-		public void Update(GameTime gameTime)
+		private IGameObject CreateAsteroid()
 		{
-			foreach (var gameObject in GetGameObjects()) {
-				gameObject.Update(gameTime);
-			}
-		}
+			var random = RandomExtension.GlobalRandom;
 
-		public IEnumerable<IGameObject> GetGameObjects()
-		{
-			for (int i = 0; i < backgroundItems.Count; ++i) {
-				yield return backgroundItems[i];
-			}
+			var asteroid = new GameObject {
+				Position = config.WindowSize.ToVector2() / 2,
+				Scale = random.NextSingle(0.1f, 1f)
+			};
 
-			for (int i = 0; i < asteroids.Count; ++i) {
-				yield return asteroids[i];
-			}
+			float radPerSec =
+				(random.Next(2) == 0 ? -1 : 1) *
+				random.NextSingle(MathF.PI / 24, MathF.PI / 16);
 
-			yield return spaceship;
+			asteroid.Behaviors.Add(new LinearRotation(asteroid, radPerSec));
+
+			var direction = Vector2.Transform(
+				Vector2.UnitX, Matrix.CreateRotationZ(random.NextSingle() * MathF.Tau)
+			);
+
+			asteroid.Behaviors.Add(new LinearMovement(asteroid, direction, random.NextSingle(5f, 20f)));
+
+			return asteroid;
 		}
 	}
 }

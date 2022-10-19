@@ -6,18 +6,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Asteroids.AppLayer
 {
-	public class GameApp : Game
+	public class GameApp : Game, IEnvironment, IKeyStateProvider
 	{
-		private class KeyStateProvider : IKeyStateProvider
-		{
-			public bool IsPressed(Keys keys)
-			{
-				return Keyboard.GetState().IsKeyDown(keys);
-			}
-		}
-
 		private readonly GraphicsDeviceManager graphics;
-		private readonly IKeyStateProvider keyStateProvider;
 		private readonly GameManager gameManager;
 
 		private SpriteBatch spriteBatch;
@@ -27,12 +18,11 @@ namespace Asteroids.AppLayer
 		public GameApp()
 		{
 			graphics = new GraphicsDeviceManager(this) {
-				PreferredBackBufferWidth = Config.Instance.WindowWidth,
-				PreferredBackBufferHeight = Config.Instance.WindowHeight
+				PreferredBackBufferWidth = Config.Instance.WindowSize.X,
+				PreferredBackBufferHeight = Config.Instance.WindowSize.Y
 			};
 
-			keyStateProvider = new KeyStateProvider();
-			gameManager = new GameManager(Config.Instance, keyStateProvider);
+			gameManager = new GameManager(Config.Instance);
 
 			Content.RootDirectory = "data";
 			IsMouseVisible = true;
@@ -40,7 +30,7 @@ namespace Asteroids.AppLayer
 
 		protected override void Initialize()
 		{
-			gameManager.Initialize();
+			gameManager.Initialize(this);
 			base.Initialize();
 		}
 
@@ -49,11 +39,12 @@ namespace Asteroids.AppLayer
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 			spaceshipTexture = Content.Load<Texture2D>("spaceship");
 			asteroidTexture = Content.Load<Texture2D>("asteroid");
+			base.LoadContent();
 		}
 
 		protected override void Update(GameTime gameTime)
 		{
-			if (keyStateProvider.IsPressed(Keys.Escape)) {
+			if (Keyboard.GetState().IsKeyDown(Keys.Escape)) {
 				Exit();
 			} else {
 				gameManager.Update(gameTime);
@@ -67,22 +58,34 @@ namespace Asteroids.AppLayer
 			GraphicsDevice.Clear(Config.Instance.BackgroundColor);
 
 			spriteBatch.Begin();
-			foreach (var item in gameManager.GetGameObjects()) {
-				if (item is Spaceship) {
-					spriteBatch.Draw(
-						spaceshipTexture, item.Position, new Rectangle(0, 0, 100, 100), Color.White,
-						item.Rotation, Vector2.One * 50f, item.Scale, SpriteEffects.None, 0.0f
-					);
-				} else {
-					spriteBatch.Draw(
-						asteroidTexture, item.Position, new Rectangle(100, 0, 100, 100), Color.White,
-						item.Rotation, Vector2.One * 50f, item.Scale, SpriteEffects.None, 0.0f
-					);
-				}
-			}
+			gameManager.Render(spriteBatch);
 			spriteBatch.End();
 
 			base.Draw(gameTime);
+		}
+
+		IKeyStateProvider IEnvironment.GetKeyStateProvider()
+		{
+			return this;
+		}
+
+		IPresenter IEnvironment.GetSpaceshipPresenter()
+		{
+			return new TextureRegionPresenter(
+				spaceshipTexture, new Rectangle(Point.Zero, new Point(100))
+			);
+		}
+
+		IPresenter IEnvironment.GetAsteroidPresenter()
+		{
+			return new TextureRegionPresenter(
+				asteroidTexture, new Rectangle(new Point(100, 0), new Point(100))
+			);
+		}
+
+		bool IKeyStateProvider.IsPressed(Keys keys)
+		{
+			return Keyboard.GetState().IsKeyDown(keys);
 		}
 	}
 }
