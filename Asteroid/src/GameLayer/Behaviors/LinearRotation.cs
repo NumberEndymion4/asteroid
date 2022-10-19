@@ -6,18 +6,16 @@ namespace Asteroids.GameLayer.Behaviors
 {
 	public class LinearRotation : IBehavior
 	{
-		private readonly IGameObject owner;
 		private readonly float rps;
 
-		public LinearRotation(IGameObject gameObject, float radianPerSecond)
+		public LinearRotation(float radianPerSecond)
 		{
-			owner = gameObject;
 			rps = radianPerSecond;
 		}
 
-		public void Update(GameTime gameTime)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
-			owner.Rotation += rps * gameTime.ElapsedSeconds();
+			gameObject.Rotation += rps * gameTime.ElapsedSeconds();
 		}
 	}
 }

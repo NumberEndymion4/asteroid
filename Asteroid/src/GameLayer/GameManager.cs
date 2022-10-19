@@ -61,8 +61,8 @@ namespace Asteroids.GameLayer
 			var spaceship = new GameObject {
 				Position = config.WindowSize.ToVector2() / 2
 			};
-			spaceship.Behaviors.Add(new InputRotation(spaceship, keys, MathF.PI));
-			spaceship.Behaviors.Add(new KineticMovement(spaceship, keys, speedOptions));
+			spaceship.Behaviors.Add(new InputRotation(keys, MathF.PI));
+			spaceship.Behaviors.Add(new KineticMovement(keys, speedOptions));
 
 			return spaceship;
 		}
@@ -80,13 +80,13 @@ namespace Asteroids.GameLayer
 				(random.Next(2) == 0 ? -1 : 1) *
 				random.NextSingle(MathF.PI / 24, MathF.PI / 16);
 
-			asteroid.Behaviors.Add(new LinearRotation(asteroid, radPerSec));
+			asteroid.Behaviors.Add(new LinearRotation(radPerSec));
 
 			var direction = Vector2.Transform(
 				Vector2.UnitX, Matrix.CreateRotationZ(random.NextSingle() * MathF.Tau)
 			);
 
-			asteroid.Behaviors.Add(new LinearMovement(asteroid, direction, random.NextSingle(5f, 20f)));
+			asteroid.Behaviors.Add(new LinearMovement(direction, random.NextSingle(5f, 20f)));
 
 			return asteroid;
 		}

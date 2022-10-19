@@ -29,7 +29,7 @@ namespace Asteroids.Core
 		public void Update(GameTime gameTime)
 		{
 			foreach (var behavior in Behaviors) {
-				behavior.Update(gameTime);
+				behavior.Update(this, gameTime);
 			}
 		}
 	}

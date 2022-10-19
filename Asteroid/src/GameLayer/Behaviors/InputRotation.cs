@@ -7,20 +7,16 @@ namespace Asteroids.GameLayer.Behaviors
 {
 	public class InputRotation : IBehavior
 	{
-		private readonly IGameObject owner;
 		private readonly IKeyStateProvider keys;
 		private readonly float rps;
 
-		public InputRotation(
-			IGameObject gameObject, IKeyStateProvider keyStateProvider, float radianPerSecond
-		)
+		public InputRotation(IKeyStateProvider keyStateProvider, float radianPerSecond)
 		{
-			owner = gameObject;
 			keys = keyStateProvider;
 			rps = radianPerSecond;
 		}
 
-		public void Update(GameTime gameTime)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
 			bool isLeftPressed = keys.IsPressed(Keys.Left);
 			bool isRightPressed = keys.IsPressed(Keys.Right);
@@ -30,7 +26,7 @@ namespace Asteroids.GameLayer.Behaviors
 			}
 
 			float radians = (isRightPressed ? 1 : -1) * rps * gameTime.ElapsedSeconds();
-			owner.Rotation = MathHelper.WrapAngle(owner.Rotation + radians);
+			gameObject.Rotation = MathHelper.WrapAngle(gameObject.Rotation + radians);
 		}
 	}
 }

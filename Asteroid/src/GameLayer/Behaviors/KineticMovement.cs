@@ -15,26 +15,18 @@ namespace Asteroids.GameLayer.Behaviors
 			public float Deceleration;
 		}
 
-		private readonly IGameObject owner;
 		private readonly IKeyStateProvider keys;
 		private readonly Options options;
 
 		private float speed;
 
-		private Vector2 OwnerDirection => new Vector2(
-			MathF.Cos(owner.Rotation), MathF.Sin(owner.Rotation)
-		);
-
-		public KineticMovement(
-			IGameObject gameObject, IKeyStateProvider keyStateProvider, Options speedOptions
-		)
+		public KineticMovement(IKeyStateProvider keyStateProvider, Options speedOptions)
 		{
-			owner = gameObject;
 			keys = keyStateProvider;
 			options = speedOptions;
 		}
 
-		public void Update(GameTime gameTime)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
 			float deltaSec = gameTime.ElapsedSeconds();
 			float desiredSpeed = keys.IsPressed(Keys.Up) ? options.MaxSpeed : 0;
@@ -43,8 +35,9 @@ namespace Asteroids.GameLayer.Behaviors
 				? -options.Deceleration * deltaSec
 				: options.Acceleration * deltaSec;
 
+			var (sin, cos) = MathF.SinCos(gameObject.Rotation);
 			speed = Math.Clamp(speed + addSpeed, 0, options.MaxSpeed);
-			owner.Position += OwnerDirection * speed * deltaSec;
+			gameObject.Position += new Vector2(cos, sin) * speed * deltaSec;
 		}
 	}
 }

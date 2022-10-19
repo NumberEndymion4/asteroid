@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Asteroids.Core;
+using Microsoft.Xna.Framework;
 
 namespace Asteroids.GameLayer
 {
 	public interface IBehavior
 	{
-		void Update(GameTime gameTime);
+		void Update(IGameObject gameObject, GameTime gameTime);
 	}
 }
