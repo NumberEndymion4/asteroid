@@ -37,6 +37,13 @@
 /processorParam:TextureFormat=Color
 /build:circle.png
 
+#begin font.spritefont
+/importer:FontDescriptionImporter
+/processor:LocalizedFontProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:font.spritefont
+
 #begin spaceship.png
 /importer:TextureImporter
 /processor:TextureProcessor
