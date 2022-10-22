@@ -4,18 +4,22 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Asteroids.AppLayer
 {
-	public class TextureRegionPresenter : IPresenter
+	public class GameObjectPresenter : IPresenter
 	{
+		private readonly IGameObject gameObject;
 		private readonly Texture2D texture;
 		private readonly Rectangle region;
 
-		public TextureRegionPresenter(Texture2D renderTexture, Rectangle textureRegion)
+		public GameObjectPresenter(
+			IGameObject renderObject, Texture2D renderTexture, Rectangle textureRegion
+		)
 		{
+			gameObject = renderObject;
 			texture = renderTexture;
 			region = textureRegion;
 		}
 
-		public void Render(SpriteBatch spriteBatch, IGameObject gameObject)
+		public void Render(SpriteBatch spriteBatch)
 		{
 			spriteBatch.Draw(
 				texture,

@@ -8,7 +8,6 @@ namespace Asteroids.AppLayer
 {
 	public class GameApp : Game, IEnvironment, IKeyStateProvider
 	{
-		private readonly GraphicsDeviceManager graphics;
 		private readonly GameManager gameManager;
 
 		private SpriteBatch spriteBatch;
@@ -17,7 +16,7 @@ namespace Asteroids.AppLayer
 
 		public GameApp()
 		{
-			graphics = new GraphicsDeviceManager(this) {
+			_ = new GraphicsDeviceManager(this) {
 				PreferredBackBufferWidth = Config.Instance.WindowSize.X,
 				PreferredBackBufferHeight = Config.Instance.WindowSize.Y
 			};
@@ -69,17 +68,17 @@ namespace Asteroids.AppLayer
 			return this;
 		}
 
-		IPresenter IEnvironment.GetSpaceshipPresenter()
+		IPresenter IEnvironment.GetSpaceshipPresenter(IGameObject spaceship)
 		{
-			return new TextureRegionPresenter(
-				spaceshipTexture, new Rectangle(Point.Zero, new Point(100))
+			return new GameObjectPresenter(
+				spaceship, spaceshipTexture, new Rectangle(Point.Zero, new Point(100))
 			);
 		}
 
-		IPresenter IEnvironment.GetAsteroidPresenter()
+		IPresenter IEnvironment.GetAsteroidPresenter(IGameObject asteroid)
 		{
-			return new TextureRegionPresenter(
-				asteroidTexture, new Rectangle(new Point(100, 0), new Point(100))
+			return new GameObjectPresenter(
+				asteroid, asteroidTexture, new Rectangle(new Point(100, 0), new Point(100))
 			);
 		}
 

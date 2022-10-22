@@ -4,6 +4,6 @@ namespace Asteroids.Core
 {
 	public interface IPresenter
 	{
-		void Render(SpriteBatch spriteBatch, IGameObject gameObject);
+		void Render(SpriteBatch spriteBatch);
 	}
 }

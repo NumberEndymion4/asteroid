@@ -5,20 +5,21 @@ using Asteroids.GameLayer.Behaviors;
 using Asteroids.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Asteroids.GameLayer
 {
 	internal class GameManager
 	{
-		private readonly Dictionary<IGameObject, Func<IPresenter>> presenters;
+		private readonly List<IGameObject> gameObjects;
+		private readonly List<Func<IPresenter>> presenters;
 		private readonly Config config;
 
 		private IEnvironment environment;
 
 		public GameManager(Config gameConfig)
 		{
-			presenters = new Dictionary<IGameObject, Func<IPresenter>>();
+			gameObjects = new List<IGameObject>();
+			presenters = new List<Func<IPresenter>>();
 			config = gameConfig;
 		}
 
@@ -27,26 +28,27 @@ namespace Asteroids.GameLayer
 			environment = gameEnvironment;
 
 			for (int i = 0; i < 50; ++i) {
-				presenters.Add(CreateAsteroid(), environment.GetAsteroidPresenter);
+				var asteroid = CreateAsteroid();
+				gameObjects.Add(asteroid);
+				presenters.Add(() => environment.GetAsteroidPresenter(asteroid));
 			}
 
-			presenters.Add(
-				CreateSpaceship(environment.GetKeyStateProvider()),
-				environment.GetSpaceshipPresenter
-			);
+			var spaceship = CreateSpaceship(environment.GetKeyStateProvider());
+			gameObjects.Add(spaceship);
+			presenters.Add(() => environment.GetSpaceshipPresenter(spaceship));
 		}
 
 		public void Update(GameTime gameTime)
 		{
-			foreach (var (gameObject, _) in presenters) {
+			foreach (var gameObject in gameObjects) {
 				gameObject.Update(gameTime);
 			}
 		}
 
 		public void Render(SpriteBatch spriteBatch)
 		{
-			foreach (var (gameObject, getPresenter) in presenters) {
-				getPresenter().Render(spriteBatch, gameObject);
+			foreach (var getPresenter in presenters) {
+				getPresenter().Render(spriteBatch);
 			}
 		}
 

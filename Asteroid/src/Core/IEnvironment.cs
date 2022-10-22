@@ -4,7 +4,7 @@
 	{
 		IKeyStateProvider GetKeyStateProvider();
 
-		IPresenter GetSpaceshipPresenter();
-		IPresenter GetAsteroidPresenter();
+		IPresenter GetSpaceshipPresenter(IGameObject spaceship);
+		IPresenter GetAsteroidPresenter(IGameObject asteroid);
 	}
 }
