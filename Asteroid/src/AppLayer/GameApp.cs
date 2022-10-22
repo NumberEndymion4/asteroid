@@ -1,5 +1,7 @@
-﻿using Asteroids.Core;
+﻿using Asteroids.AppLayer.Presenters;
+using Asteroids.Core;
 using Asteroids.GameLayer;
+using Asteroids.GameLayer.Behaviors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,6 +15,7 @@ namespace Asteroids.AppLayer
 		private SpriteBatch spriteBatch;
 		private Texture2D spaceshipTexture;
 		private Texture2D asteroidTexture;
+		private Texture2D circleTexture;
 
 		public GameApp()
 		{
@@ -38,11 +41,16 @@ namespace Asteroids.AppLayer
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 			spaceshipTexture = Content.Load<Texture2D>("spaceship");
 			asteroidTexture = Content.Load<Texture2D>("asteroid");
+			circleTexture = Content.Load<Texture2D>("circle");
 			base.LoadContent();
 		}
 
 		protected override void Update(GameTime gameTime)
 		{
+			if (Keyboard.GetState().IsKeyDown(Keys.OemTilde)) {
+				gameTime.ElapsedGameTime /= 5;
+			}
+
 			if (Keyboard.GetState().IsKeyDown(Keys.Escape)) {
 				Exit();
 			} else {
@@ -80,6 +88,11 @@ namespace Asteroids.AppLayer
 			return new GameObjectPresenter(
 				asteroid, asteroidTexture, new Rectangle(new Point(100, 0), new Point(100))
 			);
+		}
+
+		IPresenter IEnvironment.GetBoundsPresenter(CircleCollider collider)
+		{
+			return new ColliderPresenter(collider, circleTexture);
 		}
 
 		bool IKeyStateProvider.IsPressed(Keys keys)

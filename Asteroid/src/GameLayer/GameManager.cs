@@ -12,7 +12,9 @@ namespace Asteroids.GameLayer
 	{
 		private readonly List<IGameObject> gameObjects;
 		private readonly List<Func<IPresenter>> presenters;
+		private readonly CollisionManager collisionManager;
 		private readonly Config config;
+		private readonly Random random;
 
 		private IEnvironment environment;
 
@@ -20,22 +22,63 @@ namespace Asteroids.GameLayer
 		{
 			gameObjects = new List<IGameObject>();
 			presenters = new List<Func<IPresenter>>();
+			collisionManager = new CollisionManager();
 			config = gameConfig;
+			random = new Random();
 		}
 
 		public void Initialize(IEnvironment gameEnvironment)
 		{
 			environment = gameEnvironment;
+			var keys = environment.GetKeyStateProvider();
+			var screenCenter = config.WindowSize.ToVector2() / 2;
 
 			for (int i = 0; i < 50; ++i) {
-				var asteroid = CreateAsteroid();
+				var asteroid = new GameObject {
+					Position = screenCenter,
+					Scale = random.NextSingle(0.1f, 1f),
+				};
+
+				float radPerSec =
+					(random.Next(2) == 0 ? -1 : 1) *
+					random.NextSingle(MathF.PI / 24, MathF.PI / 16);
+
+				asteroid.Behaviors.Add(new LinearRotation(radPerSec));
+
+				var direction = Vector2.Transform(
+					Vector2.UnitX, Matrix.CreateRotationZ(random.NextSingle() * MathF.Tau)
+				);
+
+				asteroid.Behaviors.Add(new LinearMovement(direction, random.NextSingle(5f, 20f)));
+
+				var asteroidCollider = new CircleCollider(65 / 2f);
+				asteroid.Behaviors.Add(asteroidCollider);
+				collisionManager.Register(asteroidCollider);
+
 				gameObjects.Add(asteroid);
 				presenters.Add(() => environment.GetAsteroidPresenter(asteroid));
+				presenters.Add(() => environment.GetBoundsPresenter(asteroidCollider));
 			}
 
-			var spaceship = CreateSpaceship(environment.GetKeyStateProvider());
+			var speedOptions = new KineticMovement.Options {
+				MaxSpeed = 400,
+				Acceleration = 300,
+				Deceleration = 200,
+			};
+
+			var spaceship = new GameObject {
+				Position = new Vector2(100, 100),
+			};
+			spaceship.Behaviors.Add(new InputRotation(keys, MathF.PI));
+			spaceship.Behaviors.Add(new KineticMovement(keys, speedOptions));
+
+			var spaceshipCollider = new CircleCollider(55 / 2f);
+			spaceship.Behaviors.Add(spaceshipCollider);
+			collisionManager.Register(spaceshipCollider);
+
 			gameObjects.Add(spaceship);
 			presenters.Add(() => environment.GetSpaceshipPresenter(spaceship));
+			presenters.Add(() => environment.GetBoundsPresenter(spaceshipCollider));
 		}
 
 		public void Update(GameTime gameTime)
@@ -43,6 +86,8 @@ namespace Asteroids.GameLayer
 			foreach (var gameObject in gameObjects) {
 				gameObject.Update(gameTime);
 			}
+
+			collisionManager.Update(gameTime);
 		}
 
 		public void Render(SpriteBatch spriteBatch)
@@ -50,47 +95,6 @@ namespace Asteroids.GameLayer
 			foreach (var getPresenter in presenters) {
 				getPresenter().Render(spriteBatch);
 			}
-		}
-
-		private IGameObject CreateSpaceship(IKeyStateProvider keys)
-		{
-			var speedOptions = new KineticMovement.Options {
-				MaxSpeed = 400,
-				Acceleration = 300,
-				Deceleration = 200
-			};
-
-			var spaceship = new GameObject {
-				Position = config.WindowSize.ToVector2() / 2
-			};
-			spaceship.Behaviors.Add(new InputRotation(keys, MathF.PI));
-			spaceship.Behaviors.Add(new KineticMovement(keys, speedOptions));
-
-			return spaceship;
-		}
-
-		private IGameObject CreateAsteroid()
-		{
-			var random = RandomExtension.GlobalRandom;
-
-			var asteroid = new GameObject {
-				Position = config.WindowSize.ToVector2() / 2,
-				Scale = random.NextSingle(0.1f, 1f)
-			};
-
-			float radPerSec =
-				(random.Next(2) == 0 ? -1 : 1) *
-				random.NextSingle(MathF.PI / 24, MathF.PI / 16);
-
-			asteroid.Behaviors.Add(new LinearRotation(radPerSec));
-
-			var direction = Vector2.Transform(
-				Vector2.UnitX, Matrix.CreateRotationZ(random.NextSingle() * MathF.Tau)
-			);
-
-			asteroid.Behaviors.Add(new LinearMovement(direction, random.NextSingle(5f, 20f)));
-
-			return asteroid;
 		}
 	}
 }

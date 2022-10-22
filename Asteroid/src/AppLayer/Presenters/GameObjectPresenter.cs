@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Asteroids.AppLayer
+namespace Asteroids.AppLayer.Presenters
 {
 	public class GameObjectPresenter : IPresenter
 	{
