@@ -72,13 +72,21 @@ namespace Asteroids.GameLayer
 			spaceship.Behaviors.Add(new InputRotation(keys, MathF.PI));
 			spaceship.Behaviors.Add(new KineticMovement(keys, speedOptions));
 
+			var positionProvider = new PositionProvider();
+			spaceship.Behaviors.Add(positionProvider);
+			presenters.Add(() => environment.GetSpaceshipPositionToHudPresenter(positionProvider));
+
+			var angleProvider = new AngleProvider();
+			spaceship.Behaviors.Add(angleProvider);
+			presenters.Add(() => environment.GetSpaceshipAngleToHudPresenter(angleProvider));
+
 			var spaceshipCollider = new CircleCollider(55 / 2f);
 			spaceship.Behaviors.Add(spaceshipCollider);
 			collisionManager.Register(spaceshipCollider);
+			presenters.Add(() => environment.GetBoundsPresenter(spaceshipCollider));
 
 			gameObjects.Add(spaceship);
 			presenters.Add(() => environment.GetSpaceshipPresenter(spaceship));
-			presenters.Add(() => environment.GetBoundsPresenter(spaceshipCollider));
 		}
 
 		public void Update(GameTime gameTime)

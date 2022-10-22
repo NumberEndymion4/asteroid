@@ -16,6 +16,7 @@ namespace Asteroids.AppLayer
 		private Texture2D spaceshipTexture;
 		private Texture2D asteroidTexture;
 		private Texture2D circleTexture;
+		private SpriteFont font;
 
 		public GameApp()
 		{
@@ -42,6 +43,8 @@ namespace Asteroids.AppLayer
 			spaceshipTexture = Content.Load<Texture2D>("spaceship");
 			asteroidTexture = Content.Load<Texture2D>("asteroid");
 			circleTexture = Content.Load<Texture2D>("circle");
+			font = Content.Load<SpriteFont>("font");
+
 			base.LoadContent();
 		}
 
@@ -93,6 +96,24 @@ namespace Asteroids.AppLayer
 		IPresenter IEnvironment.GetBoundsPresenter(CircleCollider collider)
 		{
 			return new ColliderPresenter(collider, circleTexture);
+		}
+
+		IPresenter IEnvironment.GetSpaceshipPositionToHudPresenter(
+			IDataProvider<Vector2> positionProvider
+		) {
+			return new TextPresenter<Vector2>(
+				font, Vector2.Zero, positionProvider, PositionToString
+			);
+
+			static string PositionToString(Vector2 position) =>
+				$"Coordinates: ({position.X:F0}; {position.Y:F0})";
+		}
+
+		IPresenter IEnvironment.GetSpaceshipAngleToHudPresenter(IDataProvider<float> angleProvider)
+		{
+			return new TextPresenter<float>(font, new Vector2(0, 24), angleProvider, AngleToString);
+
+			static string AngleToString(float angle) => $"Angle: {angle:F0}";
 		}
 
 		bool IKeyStateProvider.IsPressed(Keys keys)

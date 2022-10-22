@@ -12,8 +12,7 @@ namespace Asteroids.AppLayer.Presenters
 
 		public GameObjectPresenter(
 			IGameObject renderObject, Texture2D renderTexture, Rectangle textureRegion
-		)
-		{
+		) {
 			gameObject = renderObject;
 			texture = renderTexture;
 			region = textureRegion;
