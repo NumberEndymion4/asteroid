@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Asteroids.GameLayer
+namespace Core
 {
 	public readonly struct BoundingCircle
 	{

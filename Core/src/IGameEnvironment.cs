@@ -1,16 +1,14 @@
-﻿using Asteroids.GameLayer.Behaviors;
-using Core;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
-namespace Asteroids.GameLayer
+namespace Core
 {
-	public interface IEnvironment
+	public interface IGameEnvironment
 	{
 		IKeyStateProvider GetKeyStateProvider();
 
 		IPresenter GetSpaceshipPresenter(IGameObject spaceship);
 		IPresenter GetAsteroidPresenter(IGameObject asteroid);
-		IPresenter GetBoundsPresenter(CircleCollider collider);
+		IPresenter GetBoundsPresenter(ICollider collider);
 
 		IPresenter GetSpaceshipPositionToHudPresenter(IDataProvider<Vector2> positionProvider);
 		IPresenter GetSpaceshipAngleToHudPresenter(IDataProvider<float> angleProvider);

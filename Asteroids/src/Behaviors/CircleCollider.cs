@@ -1,9 +1,9 @@
 ﻿using Core;
 using Microsoft.Xna.Framework;
 
-namespace Asteroids.GameLayer.Behaviors
+namespace Asteroids.Behaviors
 {
-	public class CircleCollider : IBehavior, ICollider
+	internal class CircleCollider : IBehavior, ICollider
 	{
 		private readonly float sourceRadius;
 

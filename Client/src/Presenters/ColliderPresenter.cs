@@ -1,17 +1,16 @@
 ﻿using System;
-using Asteroids.GameLayer.Behaviors;
 using Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Asteroids.AppLayer.Presenters
+namespace Client.Presenters
 {
-	public class ColliderPresenter : IPresenter
+	internal class ColliderPresenter : IPresenter
 	{
-		private readonly CircleCollider collider;
+		private readonly ICollider collider;
 		private readonly Texture2D texture;
 
-		public ColliderPresenter(CircleCollider renderCollider, Texture2D renderTexture)
+		public ColliderPresenter(ICollider renderCollider, Texture2D renderTexture)
 		{
 			collider = renderCollider;
 			texture = renderTexture;

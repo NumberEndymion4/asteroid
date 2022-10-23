@@ -3,9 +3,9 @@ using Core.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Asteroids.GameLayer.Behaviors
+namespace Asteroids.Behaviors
 {
-	public class InputRotation : IBehavior
+	internal class InputRotation : IBehavior
 	{
 		private readonly IKeyStateProvider keys;
 		private readonly float rps;

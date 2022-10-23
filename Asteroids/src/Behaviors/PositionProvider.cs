@@ -1,9 +1,9 @@
 ﻿using Core;
 using Microsoft.Xna.Framework;
 
-namespace Asteroids.GameLayer.Behaviors
+namespace Asteroids.Behaviors
 {
-	public class PositionProvider : IBehavior, IDataProvider<Vector2>
+	internal class PositionProvider : IBehavior, IDataProvider<Vector2>
 	{
 		public Vector2 Data { get; private set; }
 

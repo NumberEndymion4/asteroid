@@ -2,9 +2,9 @@
 using Core.Utils;
 using Microsoft.Xna.Framework;
 
-namespace Asteroids.GameLayer.Behaviors
+namespace Asteroids.Behaviors
 {
-	public class LinearMovement : IBehavior
+	internal class LinearMovement : IBehavior
 	{
 		private readonly Vector2 direction;
 		private readonly float speed;

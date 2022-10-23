@@ -2,9 +2,9 @@
 using Core;
 using Microsoft.Xna.Framework;
 
-namespace Asteroids.GameLayer.Behaviors
+namespace Asteroids.Behaviors
 {
-	public class AngleProvider : IBehavior, IDataProvider<float>
+	internal class AngleProvider : IBehavior, IDataProvider<float>
 	{
 		public float Data { get; private set; }
 

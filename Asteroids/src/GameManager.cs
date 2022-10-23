@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Asteroids.GameLayer.Behaviors;
 using Core;
 using Core.Utils;
+using Asteroids.Behaviors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Asteroids.GameLayer
+namespace Asteroids
 {
-	internal class GameManager
+	public class GameManager
 	{
 		private readonly List<IGameObject> gameObjects;
 		private readonly List<Func<IPresenter>> presenters;
@@ -16,7 +16,7 @@ namespace Asteroids.GameLayer
 		private readonly Config config;
 		private readonly Random random;
 
-		private IEnvironment environment;
+		private IGameEnvironment environment;
 
 		public GameManager(Config gameConfig)
 		{
@@ -27,7 +27,7 @@ namespace Asteroids.GameLayer
 			random = new Random();
 		}
 
-		public void Initialize(IEnvironment gameEnvironment)
+		public void Initialize(IGameEnvironment gameEnvironment)
 		{
 			environment = gameEnvironment;
 			var keys = environment.GetKeyStateProvider();

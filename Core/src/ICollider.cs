@@ -1,4 +1,4 @@
-﻿namespace Asteroids.GameLayer
+﻿namespace Core
 {
 	public interface ICollider
 	{

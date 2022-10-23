@@ -2,9 +2,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Asteroids.AppLayer.Presenters
+namespace Client.Presenters
 {
-	public class GameObjectPresenter : IPresenter
+	internal class GameObjectPresenter : IPresenter
 	{
 		private readonly IGameObject gameObject;
 		private readonly Texture2D texture;

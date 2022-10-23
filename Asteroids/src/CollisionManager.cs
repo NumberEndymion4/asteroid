@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using Core;
 using Microsoft.Xna.Framework;
 
-namespace Asteroids.GameLayer
+namespace Asteroids
 {
-	public partial class CollisionManager
+	internal class CollisionManager
 	{
 		private readonly HashSet<ICollider> entries;
 		private readonly List<ICollider> bucket;

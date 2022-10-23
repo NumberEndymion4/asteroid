@@ -3,9 +3,9 @@ using Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Asteroids.AppLayer.Presenters
+namespace Client.Presenters
 {
-	public class TextPresenter<T> : IPresenter
+	internal class TextPresenter<T> : IPresenter
 	{
 		private readonly SpriteFont font;
 		private readonly Vector2 position;

@@ -1,14 +1,13 @@
-﻿using Asteroids.AppLayer.Presenters;
-using Asteroids.GameLayer;
-using Asteroids.GameLayer.Behaviors;
+﻿using Asteroids;
+using Client.Presenters;
 using Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Asteroids.AppLayer
+namespace Client
 {
-	public class GameApp : Game, IEnvironment, IKeyStateProvider
+	internal class GameApp : Game, IGameEnvironment, IKeyStateProvider
 	{
 		private readonly GameManager gameManager;
 
@@ -74,31 +73,31 @@ namespace Asteroids.AppLayer
 			base.Draw(gameTime);
 		}
 
-		IKeyStateProvider IEnvironment.GetKeyStateProvider()
+		IKeyStateProvider IGameEnvironment.GetKeyStateProvider()
 		{
 			return this;
 		}
 
-		IPresenter IEnvironment.GetSpaceshipPresenter(IGameObject spaceship)
+		IPresenter IGameEnvironment.GetSpaceshipPresenter(IGameObject spaceship)
 		{
 			return new GameObjectPresenter(
 				spaceship, spaceshipTexture, new Rectangle(Point.Zero, new Point(100))
 			);
 		}
 
-		IPresenter IEnvironment.GetAsteroidPresenter(IGameObject asteroid)
+		IPresenter IGameEnvironment.GetAsteroidPresenter(IGameObject asteroid)
 		{
 			return new GameObjectPresenter(
 				asteroid, asteroidTexture, new Rectangle(new Point(100, 0), new Point(100))
 			);
 		}
 
-		IPresenter IEnvironment.GetBoundsPresenter(CircleCollider collider)
+		IPresenter IGameEnvironment.GetBoundsPresenter(ICollider collider)
 		{
 			return new ColliderPresenter(collider, circleTexture);
 		}
 
-		IPresenter IEnvironment.GetSpaceshipPositionToHudPresenter(
+		IPresenter IGameEnvironment.GetSpaceshipPositionToHudPresenter(
 			IDataProvider<Vector2> positionProvider
 		) {
 			return new TextPresenter<Vector2>(
@@ -109,7 +108,7 @@ namespace Asteroids.AppLayer
 				$"Coordinates: ({position.X:F0}; {position.Y:F0})";
 		}
 
-		IPresenter IEnvironment.GetSpaceshipAngleToHudPresenter(IDataProvider<float> angleProvider)
+		IPresenter IGameEnvironment.GetSpaceshipAngleToHudPresenter(IDataProvider<float> angleProvider)
 		{
 			return new TextPresenter<float>(font, new Vector2(0, 24), angleProvider, AngleToString);
 
