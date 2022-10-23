@@ -1,7 +1,7 @@
 ﻿using Asteroids.AppLayer.Presenters;
-using Asteroids.Core;
 using Asteroids.GameLayer;
 using Asteroids.GameLayer.Behaviors;
+using Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

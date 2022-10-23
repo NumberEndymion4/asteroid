@@ -1,6 +1,6 @@
 ﻿using System;
-using Asteroids.Core;
 using Asteroids.GameLayer.Behaviors;
+using Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

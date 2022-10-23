@@ -1,7 +1,6 @@
-﻿using Asteroids.Core;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
-namespace Asteroids.GameLayer
+namespace Core
 {
 	public interface IBehavior
 	{

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Asteroids.Utils
+namespace Core.Utils
 {
 	public static class RandomExtension
 	{

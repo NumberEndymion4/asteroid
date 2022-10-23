@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Asteroids.Core
+namespace Core
 {
 	public class Config
 	{

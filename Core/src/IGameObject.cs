@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Asteroids.GameLayer;
 using Microsoft.Xna.Framework;
 
-namespace Asteroids.Core
+namespace Core
 {
 	public interface IGameObject
 	{

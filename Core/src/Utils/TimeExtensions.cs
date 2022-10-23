@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Asteroids.Utils
+namespace Core.Utils
 {
 	public static class TimeExtensions
 	{

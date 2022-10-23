@@ -1,4 +1,4 @@
-﻿namespace Asteroids.Core
+﻿namespace Core
 {
 	public interface IDataProvider<T>
 	{

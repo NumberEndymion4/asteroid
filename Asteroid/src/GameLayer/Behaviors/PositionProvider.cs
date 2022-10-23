@@ -1,4 +1,4 @@
-﻿using Asteroids.Core;
+﻿using Core;
 using Microsoft.Xna.Framework;
 
 namespace Asteroids.GameLayer.Behaviors

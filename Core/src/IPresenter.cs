@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace Asteroids.Core
+namespace Core
 {
 	public interface IPresenter
 	{
