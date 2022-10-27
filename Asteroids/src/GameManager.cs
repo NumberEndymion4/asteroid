@@ -12,28 +12,24 @@ namespace Asteroids
 	{
 		private readonly List<IGameObject> gameObjects;
 		private readonly List<Func<IPresenter>> presenters;
-		private readonly CollisionManager collisionManager;
-		private readonly Config config;
 		private readonly Random random;
 
-		private IGameEnvironment environment;
-
-		public GameManager(Config gameConfig)
+		public GameManager()
 		{
 			gameObjects = new List<IGameObject>();
 			presenters = new List<Func<IPresenter>>();
-			collisionManager = new CollisionManager();
-			config = gameConfig;
 			random = new Random();
 		}
 
-		public void Initialize(IGameEnvironment gameEnvironment)
+		public void Initialize(IGameEnvironment environment)
 		{
-			environment = gameEnvironment;
 			var keys = environment.GetKeyStateProvider();
-			var screenCenter = config.WindowSize.ToVector2() / 2;
 
-			for (int i = 0; i < 50; ++i) {
+			var screenCenter = new Vector2(
+				Config.Instance.WindowWidth / 2f, Config.Instance.WindowHeight / 2f
+			);
+
+			for (int i = 0; i < 20; ++i) {
 				var asteroid = new GameObject {
 					Position = screenCenter,
 					Scale = random.NextSingle(0.1f, 1f),
@@ -50,12 +46,17 @@ namespace Asteroids
 				);
 
 				asteroid.AddBehavior(
-					new LinearMovement(asteroid, direction, random.NextSingle(5f, 20f))
+					new LinearMovement(asteroid, direction, random.NextSingle(5f, 15f))
 				);
 
 				var asteroidCollider = new CircleCollider(asteroid, 65 / 2f);
 				asteroid.AddBehavior(asteroidCollider);
-				collisionManager.Register(asteroidCollider);
+				asteroid.AddBehavior(
+					new MakeDamageOnCollision(asteroid, Config.Instance.AsteroidGroup, 1)
+				);
+				asteroid.AddBehavior(new TakeDamageOnCollision(
+					asteroid, 1, new[] { Config.Instance.BulletGroup, Config.Instance.LaserGroup }
+				));
 
 				gameObjects.Add(asteroid);
 				presenters.Add(() => environment.GetAsteroidPresenter(asteroid));
@@ -84,11 +85,13 @@ namespace Asteroids
 
 			var spaceshipCollider = new CircleCollider(spaceship, 55 / 2f);
 			spaceship.AddBehavior(spaceshipCollider);
-			collisionManager.Register(spaceshipCollider);
-			presenters.Add(() => environment.GetBoundsPresenter(spaceshipCollider));
+			spaceship.AddBehavior(
+				new TakeDamageOnCollision(spaceship, 1, new[] { Config.Instance.AsteroidGroup })
+			);
 
 			gameObjects.Add(spaceship);
 			presenters.Add(() => environment.GetSpaceshipPresenter(spaceship));
+			presenters.Add(() => environment.GetBoundsPresenter(spaceshipCollider));
 		}
 
 		public void Update(GameTime gameTime)
@@ -97,7 +100,7 @@ namespace Asteroids
 				gameObject.Update(gameTime);
 			}
 
-			collisionManager.Update(gameTime);
+			CollisionService.Instance.Update(gameTime);
 		}
 
 		public void Render(SpriteBatch spriteBatch)

@@ -1,15 +1,21 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Core;
 using Microsoft.Xna.Framework;
 
 namespace Asteroids
 {
-	internal class CollisionManager
+	internal delegate void CollisionHandler(ICollider lhs, ICollider rhs);
+
+	internal class CollisionService
 	{
 		private readonly HashSet<ICollider> entries;
 		private readonly List<ICollider> bucket;
 
-		public CollisionManager()
+		public event CollisionHandler Collision;
+
+		public static CollisionService Instance { get; } = new CollisionService();
+
+		private CollisionService()
 		{
 			entries = new HashSet<ICollider>();
 			bucket = new List<ICollider>();
@@ -32,7 +38,7 @@ namespace Asteroids
 			for (int i = 0, count = bucket.Count; i < count; ++i) {
 				for (int j = i + 1; j < count; ++j) {
 					if (bucket[i].Bounds.IntersectsWith(bucket[j].Bounds)) {
-						bucket[i].CollisionWith(bucket[j]);
+						Collision?.Invoke(bucket[i], bucket[j]);
 					}
 				}
 			}

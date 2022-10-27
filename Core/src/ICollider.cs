@@ -1,9 +1,7 @@
 ﻿namespace Core
 {
-	public interface ICollider
+	public interface ICollider : IBehavior
 	{
 		BoundingCircle Bounds { get; }
-
-		void CollisionWith(ICollider other);
 	}
 }

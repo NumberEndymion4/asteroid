@@ -20,14 +20,14 @@ namespace Client
 		public GameApp()
 		{
 			_ = new GraphicsDeviceManager(this) {
-				PreferredBackBufferWidth = Config.Instance.WindowSize.X,
-				PreferredBackBufferHeight = Config.Instance.WindowSize.Y
+				PreferredBackBufferWidth = Config.Instance.WindowWidth,
+				PreferredBackBufferHeight = Config.Instance.WindowHeight
 			};
-
-			gameManager = new GameManager(Config.Instance);
 
 			Content.RootDirectory = "data";
 			IsMouseVisible = true;
+
+			gameManager = new GameManager();
 		}
 
 		protected override void Initialize()
