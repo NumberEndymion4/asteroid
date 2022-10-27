@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Asteroids.Behaviors;
 using Core;
 using Core.Utils;
-using Asteroids.Behaviors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
