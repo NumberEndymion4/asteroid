@@ -1,9 +1,8 @@
-﻿using Core;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
-namespace Asteroids
+namespace Core
 {
-	internal abstract class Behavior : IBehavior
+	public abstract class Behavior : IBehavior
 	{
 		public IGameObject Owner { get; }
 
