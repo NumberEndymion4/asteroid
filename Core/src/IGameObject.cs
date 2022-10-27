@@ -10,26 +10,53 @@ namespace Core
 		float Scale { get; set; }
 
 		void Update(GameTime gameTime);
+
+		TBehavior GetBehavior<TBehavior>() where TBehavior : IBehavior;
+		bool TryGetBehavior<TBehavior>(out TBehavior behavior) where TBehavior : IBehavior;
 	}
 
 	public class GameObject : IGameObject
 	{
-		public List<IBehavior> Behaviors { get; }
+		private readonly List<IBehavior> behaviors;
+
 		public Vector2 Position { get; set; }
 		public float Rotation { get; set; }
 		public float Scale { get; set; }
 
 		public GameObject()
 		{
-			Behaviors = new List<IBehavior>();
+			behaviors = new List<IBehavior>();
 			Scale = 1f;
 		}
 
 		public void Update(GameTime gameTime)
 		{
-			foreach (var behavior in Behaviors) {
-				behavior.Update(this, gameTime);
+			foreach (var behavior in behaviors) {
+				behavior.Update(gameTime);
 			}
+		}
+
+		public void AddBehavior(IBehavior behavior)
+		{
+			behaviors.Add(behavior);
+		}
+
+		public TBehavior GetBehavior<TBehavior>() where TBehavior : IBehavior
+		{
+			return TryGetBehavior(out TBehavior behavior) ? behavior : default;
+		}
+
+		public bool TryGetBehavior<TBehavior>(out TBehavior behavior) where TBehavior : IBehavior
+		{
+			foreach (var item in behaviors) {
+				if (item is TBehavior found) {
+					behavior = found;
+					return true;
+				}
+			}
+
+			behavior = default;
+			return false;
 		}
 	}
 }

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Behaviors
 {
-	internal class CircleCollider : IBehavior, ICollider
+	internal class CircleCollider : Behavior, ICollider
 	{
 		private readonly float sourceRadius;
 
@@ -12,15 +12,15 @@ namespace Asteroids.Behaviors
 
 		public BoundingCircle Bounds => new BoundingCircle(center, sourceRadius * scale);
 
-		public CircleCollider(float radius)
+		public CircleCollider(IGameObject owner, float radius) : base(owner)
 		{
 			sourceRadius = radius;
 		}
 
-		public void Update(IGameObject gameObject, GameTime gameTime)
+		public override void Update(GameTime gameTime)
 		{
-			center = gameObject.Position;
-			scale = gameObject.Scale;
+			center = Owner.Position;
+			scale = Owner.Scale;
 		}
 
 		public void CollisionWith(ICollider other)

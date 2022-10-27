@@ -5,18 +5,21 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Asteroids.Behaviors
 {
-	internal class InputRotation : IBehavior
+	internal class InputRotation : Behavior
 	{
 		private readonly IKeyStateProvider keys;
 		private readonly float rps;
 
-		public InputRotation(IKeyStateProvider keyStateProvider, float radianPerSecond)
-		{
+		public InputRotation(
+			IGameObject owner, IKeyStateProvider keyStateProvider, float radianPerSecond
+		) : base(
+			owner
+		) {
 			keys = keyStateProvider;
 			rps = radianPerSecond;
 		}
 
-		public void Update(IGameObject gameObject, GameTime gameTime)
+		public override void Update(GameTime gameTime)
 		{
 			bool isLeftPressed = keys.IsPressed(Keys.Left);
 			bool isRightPressed = keys.IsPressed(Keys.Right);
@@ -26,7 +29,7 @@ namespace Asteroids.Behaviors
 			}
 
 			float radians = (isRightPressed ? 1 : -1) * rps * gameTime.ElapsedSeconds();
-			gameObject.Rotation = MathHelper.WrapAngle(gameObject.Rotation + radians);
+			Owner.Rotation = MathHelper.WrapAngle(Owner.Rotation + radians);
 		}
 	}
 }

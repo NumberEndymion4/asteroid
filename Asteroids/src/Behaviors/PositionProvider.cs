@@ -3,13 +3,17 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Behaviors
 {
-	internal class PositionProvider : IBehavior, IDataProvider<Vector2>
+	internal class PositionProvider : Behavior, IDataProvider<Vector2>
 	{
 		public Vector2 Data { get; private set; }
 
-		public void Update(IGameObject gameObject, GameTime gameTime)
+		public PositionProvider(IGameObject owner) : base(owner)
 		{
-			Data = gameObject.Position;
+		}
+
+		public override void Update(GameTime gameTime)
+		{
+			Data = Owner.Position;
 		}
 	}
 }

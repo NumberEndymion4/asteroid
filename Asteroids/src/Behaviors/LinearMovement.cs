@@ -4,21 +4,22 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Behaviors
 {
-	internal class LinearMovement : IBehavior
+	internal class LinearMovement : Behavior
 	{
 		private readonly Vector2 direction;
 		private readonly float speed;
 
-		public LinearMovement(Vector2 moveDirection, float moveSpeed)
+		public LinearMovement(IGameObject owner, Vector2 moveDirection, float moveSpeed)
+			: base(owner)
 		{
 			direction = moveDirection;
 			direction.Normalize();
 			speed = moveSpeed;
 		}
 
-		public void Update(IGameObject gameObject, GameTime gameTime)
+		public override void Update(GameTime gameTime)
 		{
-			gameObject.Position += direction * speed * gameTime.ElapsedSeconds();
+			Owner.Position += direction * speed * gameTime.ElapsedSeconds();
 		}
 	}
 }

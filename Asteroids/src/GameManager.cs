@@ -43,16 +43,18 @@ namespace Asteroids
 					(random.Next(2) == 0 ? -1 : 1) *
 					random.NextSingle(MathF.PI / 24, MathF.PI / 16);
 
-				asteroid.Behaviors.Add(new LinearRotation(radPerSec));
+				asteroid.AddBehavior(new LinearRotation(asteroid, radPerSec));
 
 				var direction = Vector2.Transform(
 					Vector2.UnitX, Matrix.CreateRotationZ(random.NextSingle() * MathF.Tau)
 				);
 
-				asteroid.Behaviors.Add(new LinearMovement(direction, random.NextSingle(5f, 20f)));
+				asteroid.AddBehavior(
+					new LinearMovement(asteroid, direction, random.NextSingle(5f, 20f))
+				);
 
-				var asteroidCollider = new CircleCollider(65 / 2f);
-				asteroid.Behaviors.Add(asteroidCollider);
+				var asteroidCollider = new CircleCollider(asteroid, 65 / 2f);
+				asteroid.AddBehavior(asteroidCollider);
 				collisionManager.Register(asteroidCollider);
 
 				gameObjects.Add(asteroid);
@@ -69,19 +71,19 @@ namespace Asteroids
 			var spaceship = new GameObject {
 				Position = new Vector2(100, 100),
 			};
-			spaceship.Behaviors.Add(new InputRotation(keys, MathF.PI));
-			spaceship.Behaviors.Add(new KineticMovement(keys, speedOptions));
+			spaceship.AddBehavior(new InputRotation(spaceship, keys, MathF.PI));
+			spaceship.AddBehavior(new KineticMovement(spaceship, keys, speedOptions));
 
-			var positionProvider = new PositionProvider();
-			spaceship.Behaviors.Add(positionProvider);
+			var positionProvider = new PositionProvider(spaceship);
+			spaceship.AddBehavior(positionProvider);
 			presenters.Add(() => environment.GetSpaceshipPositionToHudPresenter(positionProvider));
 
-			var angleProvider = new AngleProvider();
-			spaceship.Behaviors.Add(angleProvider);
+			var angleProvider = new AngleProvider(spaceship);
+			spaceship.AddBehavior(angleProvider);
 			presenters.Add(() => environment.GetSpaceshipAngleToHudPresenter(angleProvider));
 
-			var spaceshipCollider = new CircleCollider(55 / 2f);
-			spaceship.Behaviors.Add(spaceshipCollider);
+			var spaceshipCollider = new CircleCollider(spaceship, 55 / 2f);
+			spaceship.AddBehavior(spaceshipCollider);
 			collisionManager.Register(spaceshipCollider);
 			presenters.Add(() => environment.GetBoundsPresenter(spaceshipCollider));
 
