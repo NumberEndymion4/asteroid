@@ -5,7 +5,6 @@ namespace Asteroids
 {
 	internal interface IDamageAcceptor : IBehavior
 	{
-		int Health { get; }
 		ISet<int> SensitiveTo { get; }
 	}
 }

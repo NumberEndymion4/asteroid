@@ -40,6 +40,7 @@ namespace Asteroids
 					random.NextSingle(MathF.PI / 24, MathF.PI / 16);
 
 				asteroid.AddBehavior(new LinearRotation(asteroid, radPerSec));
+				asteroid.AddBehavior(new HealthProvider(asteroid, 1));
 
 				var direction = Vector2.Transform(
 					Vector2.UnitX, Matrix.CreateRotationZ(random.NextSingle() * MathF.Tau)
@@ -55,7 +56,7 @@ namespace Asteroids
 					new MakeDamageOnCollision(asteroid, Config.Instance.AsteroidGroup, 1)
 				);
 				asteroid.AddBehavior(new TakeDamageOnCollision(
-					asteroid, 1, new[] { Config.Instance.BulletGroup, Config.Instance.LaserGroup }
+					asteroid, new[] { Config.Instance.BulletGroup, Config.Instance.LaserGroup }
 				));
 
 				gameObjects.Add(asteroid);
@@ -74,6 +75,7 @@ namespace Asteroids
 			};
 			spaceship.AddBehavior(new InputRotation(spaceship, keys, MathF.PI));
 			spaceship.AddBehavior(new KineticMovement(spaceship, keys, speedOptions));
+			spaceship.AddBehavior(new HealthProvider(spaceship, 1));
 
 			var positionProvider = new PositionProvider(spaceship);
 			spaceship.AddBehavior(positionProvider);
@@ -86,7 +88,7 @@ namespace Asteroids
 			var spaceshipCollider = new CircleCollider(spaceship, 55 / 2f);
 			spaceship.AddBehavior(spaceshipCollider);
 			spaceship.AddBehavior(
-				new TakeDamageOnCollision(spaceship, 1, new[] { Config.Instance.AsteroidGroup })
+				new TakeDamageOnCollision(spaceship, new[] { Config.Instance.AsteroidGroup })
 			);
 
 			gameObjects.Add(spaceship);

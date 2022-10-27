@@ -6,36 +6,46 @@ namespace Asteroids.Behaviors
 {
 	internal class TakeDamageOnCollision : Behavior, IDamageAcceptor
 	{
-		public int Health { get; private set; }
+		private HealthProvider health;
+		private int damageCount;
+
 		public ISet<int> SensitiveTo { get; }
 
-		public TakeDamageOnCollision(
-			GameObject owner, int health, IEnumerable<int> sensitiveToGroups
-		) : base(
-			owner
-		) {
+		public TakeDamageOnCollision(GameObject owner, IEnumerable<int> sensitiveToGroups)
+			: base(owner)
+		{
 			SensitiveTo = new HashSet<int>(sensitiveToGroups);
-			Health = health;
-
 			CollisionService.Instance.Collision += OnCollision;
 		}
 
 		public override void Update(GameTime gameTime)
 		{
+			health ??= Owner.GetBehavior<HealthProvider>();
 		}
 
 		private void OnCollision(ICollider lhs, ICollider rhs)
 		{
-			var pairOwner = Equals(Owner, lhs.Owner)
-				? rhs.Owner
-				: Equals(Owner, rhs.Owner) ? lhs.Owner : null;
-
 			if (
-				pairOwner?.GetBehavior<IDamageProvider>() is { } provider &&
+				health != null &&
+				TryGetOpponent(lhs, rhs, out var opponent) &&
+				opponent.GetBehavior<IDamageProvider>() is { } provider &&
 				SensitiveTo.Contains(provider.DamageGroup)
 			) {
-				Health -= provider.Damage;
+				damageCount += provider.Damage;
 			}
+		}
+
+		private bool TryGetOpponent(
+			ICollider collider1, ICollider collider2, out IGameObject opponent
+		) {
+			if (Equals(Owner, collider1?.Owner)) {
+				opponent = collider2?.Owner;
+			} else if (Equals(Owner, collider2?.Owner)) {
+				opponent = collider1?.Owner;
+			} else {
+				opponent = null;
+			}
+			return opponent != null;
 		}
 	}
 }
