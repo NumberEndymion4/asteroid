@@ -2,9 +2,9 @@
 using Core.Utils;
 using Microsoft.Xna.Framework;
 
-namespace Asteroids.Behaviors
+namespace Asteroids.Components
 {
-	internal class LinearRotation : Behavior
+	internal class LinearRotation : Component
 	{
 		private readonly float rps;
 

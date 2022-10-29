@@ -1,6 +1,6 @@
 ﻿namespace Core
 {
-	public interface ICollider : IBehavior
+	public interface ICollider : IComponent
 	{
 		BoundingCircle Bounds { get; }
 	}

@@ -4,9 +4,9 @@ using Core.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Asteroids.Behaviors
+namespace Asteroids.Components
 {
-	internal class KineticMovement : Behavior
+	internal class KineticMovement : Component
 	{
 		public struct Options
 		{

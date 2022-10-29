@@ -1,9 +1,9 @@
 ﻿using Core;
 using Microsoft.Xna.Framework;
 
-namespace Asteroids.Behaviors
+namespace Asteroids.Components
 {
-	internal class MakeDamageOnCollision : Behavior, IDamageProvider
+	internal class MakeDamageOnCollision : Component, IDamageProvider
 	{
 		public int DamageGroup { get; }
 		public int Damage { get; }

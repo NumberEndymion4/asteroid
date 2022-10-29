@@ -2,9 +2,9 @@
 using Core;
 using Microsoft.Xna.Framework;
 
-namespace Asteroids.Behaviors
+namespace Asteroids.Components
 {
-	internal class TakeDamageOnCollision : Behavior, IDamageAcceptor
+	internal class TakeDamageOnCollision : Component, IDamageAcceptor
 	{
 		private HealthProvider health;
 		private int damageCount;
@@ -20,7 +20,7 @@ namespace Asteroids.Behaviors
 
 		public override void Update(GameTime gameTime)
 		{
-			health ??= Owner.GetBehavior<HealthProvider>();
+			health ??= Owner.GetComponent<HealthProvider>();
 		}
 
 		private void OnCollision(ICollider lhs, ICollider rhs)
@@ -28,7 +28,7 @@ namespace Asteroids.Behaviors
 			if (
 				health != null &&
 				TryGetOpponent(lhs, rhs, out var opponent) &&
-				opponent.GetBehavior<IDamageProvider>() is { } provider &&
+				opponent.GetComponent<IDamageProvider>() is { } provider &&
 				SensitiveTo.Contains(provider.DamageGroup)
 			) {
 				damageCount += provider.Damage;

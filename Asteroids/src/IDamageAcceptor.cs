@@ -3,7 +3,7 @@ using Core;
 
 namespace Asteroids
 {
-	internal interface IDamageAcceptor : IBehavior
+	internal interface IDamageAcceptor : IComponent
 	{
 		ISet<int> SensitiveTo { get; }
 	}

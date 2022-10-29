@@ -2,7 +2,7 @@
 
 namespace Core
 {
-	public interface IBehavior
+	public interface IComponent
 	{
 		IGameObject Owner { get; }
 

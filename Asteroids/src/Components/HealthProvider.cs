@@ -1,9 +1,9 @@
 ﻿using Core;
 using Microsoft.Xna.Framework;
 
-namespace Asteroids.Behaviors
+namespace Asteroids.Components
 {
-	internal class HealthProvider : Behavior, IDataProvider<int>
+	internal class HealthProvider : Component, IDataProvider<int>
 	{
 		public int Data { get; private set; }
 

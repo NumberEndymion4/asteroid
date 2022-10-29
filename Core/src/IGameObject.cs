@@ -10,7 +10,7 @@ namespace Core
 
 		void Update(GameTime gameTime);
 
-		TBehavior GetBehavior<TBehavior>() where TBehavior : IBehavior;
-		bool TryGetBehavior<TBehavior>(out TBehavior behavior) where TBehavior : IBehavior;
+		TComponent GetComponent<TComponent>() where TComponent : IComponent;
+		bool TryGetComponent<TComponent>(out TComponent component) where TComponent : IComponent;
 	}
 }

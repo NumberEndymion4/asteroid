@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Asteroids.Behaviors;
+using Asteroids.Components;
 using Core;
 using Core.Utils;
 using Microsoft.Xna.Framework;
@@ -39,23 +39,23 @@ namespace Asteroids
 					(random.Next(2) == 0 ? -1 : 1) *
 					random.NextSingle(MathF.PI / 24, MathF.PI / 16);
 
-				asteroid.AddBehavior(new LinearRotation(asteroid, radPerSec));
-				asteroid.AddBehavior(new HealthProvider(asteroid, 1));
+				asteroid.AddComponent(new LinearRotation(asteroid, radPerSec));
+				asteroid.AddComponent(new HealthProvider(asteroid, 1));
 
 				var direction = Vector2.Transform(
 					Vector2.UnitX, Matrix.CreateRotationZ(random.NextSingle() * MathF.Tau)
 				);
 
-				asteroid.AddBehavior(
+				asteroid.AddComponent(
 					new LinearMovement(asteroid, direction, random.NextSingle(5f, 15f))
 				);
 
 				var asteroidCollider = new CircleCollider(asteroid, 65 / 2f);
-				asteroid.AddBehavior(asteroidCollider);
-				asteroid.AddBehavior(
+				asteroid.AddComponent(asteroidCollider);
+				asteroid.AddComponent(
 					new MakeDamageOnCollision(asteroid, Config.Instance.AsteroidGroup, 1)
 				);
-				asteroid.AddBehavior(new TakeDamageOnCollision(
+				asteroid.AddComponent(new TakeDamageOnCollision(
 					asteroid, new[] { Config.Instance.BulletGroup, Config.Instance.LaserGroup }
 				));
 
@@ -73,21 +73,21 @@ namespace Asteroids
 			var spaceship = new GameObject {
 				Position = new Vector2(100, 100),
 			};
-			spaceship.AddBehavior(new InputRotation(spaceship, keys, MathF.PI));
-			spaceship.AddBehavior(new KineticMovement(spaceship, keys, speedOptions));
-			spaceship.AddBehavior(new HealthProvider(spaceship, 1));
+			spaceship.AddComponent(new InputRotation(spaceship, keys, MathF.PI));
+			spaceship.AddComponent(new KineticMovement(spaceship, keys, speedOptions));
+			spaceship.AddComponent(new HealthProvider(spaceship, 1));
 
 			var positionProvider = new PositionProvider(spaceship);
-			spaceship.AddBehavior(positionProvider);
+			spaceship.AddComponent(positionProvider);
 			presenters.Add(() => environment.GetSpaceshipPositionToHudPresenter(positionProvider));
 
 			var angleProvider = new AngleProvider(spaceship);
-			spaceship.AddBehavior(angleProvider);
+			spaceship.AddComponent(angleProvider);
 			presenters.Add(() => environment.GetSpaceshipAngleToHudPresenter(angleProvider));
 
 			var spaceshipCollider = new CircleCollider(spaceship, 55 / 2f);
-			spaceship.AddBehavior(spaceshipCollider);
-			spaceship.AddBehavior(
+			spaceship.AddComponent(spaceshipCollider);
+			spaceship.AddComponent(
 				new TakeDamageOnCollision(spaceship, new[] { Config.Instance.AsteroidGroup })
 			);
 

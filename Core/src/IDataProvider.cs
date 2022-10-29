@@ -1,6 +1,6 @@
 ﻿namespace Core
 {
-	public interface IDataProvider<T>
+	public interface IDataProvider<T> : IComponent
 	{
 		T Data { get; }
 	}

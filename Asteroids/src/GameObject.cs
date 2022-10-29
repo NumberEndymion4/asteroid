@@ -6,7 +6,7 @@ namespace Asteroids
 {
 	public class GameObject : IGameObject
 	{
-		private readonly List<IBehavior> behaviors;
+		private readonly List<IComponent> components;
 
 		public Vector2 Position { get; set; }
 		public float Rotation { get; set; }
@@ -14,37 +14,37 @@ namespace Asteroids
 
 		public GameObject()
 		{
-			behaviors = new List<IBehavior>();
+			components = new List<IComponent>();
 			Scale = 1f;
 		}
 
 		public void Update(GameTime gameTime)
 		{
-			foreach (var behavior in behaviors) {
-				behavior.Update(gameTime);
+			foreach (var component in components) {
+				component.Update(gameTime);
 			}
 		}
 
-		public void AddBehavior(IBehavior behavior)
+		public void AddComponent(IComponent component)
 		{
-			behaviors.Add(behavior);
+			components.Add(component);
 		}
 
-		public TBehavior GetBehavior<TBehavior>() where TBehavior : IBehavior
+		public TComponent GetComponent<TComponent>() where TComponent : IComponent
 		{
-			return TryGetBehavior(out TBehavior behavior) ? behavior : default;
+			return TryGetComponent(out TComponent component) ? component : default;
 		}
 
-		public bool TryGetBehavior<TBehavior>(out TBehavior behavior) where TBehavior : IBehavior
+		public bool TryGetComponent<TComponent>(out TComponent component) where TComponent : IComponent
 		{
-			foreach (var item in behaviors) {
-				if (item is TBehavior found) {
-					behavior = found;
+			foreach (var item in components) {
+				if (item is TComponent found) {
+					component = found;
 					return true;
 				}
 			}
 
-			behavior = default;
+			component = default;
 			return false;
 		}
 	}

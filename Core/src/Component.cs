@@ -2,11 +2,11 @@
 
 namespace Core
 {
-	public abstract class Behavior : IBehavior
+	public abstract class Component : IComponent
 	{
 		public IGameObject Owner { get; }
 
-		protected Behavior(IGameObject owner)
+		public Component(IGameObject owner)
 		{
 			Owner = owner;
 		}
