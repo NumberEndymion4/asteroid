@@ -9,12 +9,11 @@ namespace Asteroids.Components
 		private readonly int healthPoints;
 
 		private int acceptedDamage;
-		private bool isDead;
 
 		public int Health => Math.Max(0, healthPoints - acceptedDamage);
 
 		LifeCycleState IDataProvider<LifeCycleState>.Data =>
-			isDead ? LifeCycleState.Dead : LifeCycleState.Alive;
+			Health > 0 ? LifeCycleState.Alive : LifeCycleState.Dead;
 
 		public HealthProvider(IGameObject owner, int health) : base(owner)
 		{
@@ -23,9 +22,8 @@ namespace Asteroids.Components
 
 		public void Hit(int damage)
 		{
-			if (!isDead && damage > 0) {
+			if (damage > 0 && Health > 0) {
 				acceptedDamage += damage;
-				isDead = Health == 0;
 			}
 		}
 

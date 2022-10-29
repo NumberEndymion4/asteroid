@@ -12,7 +12,7 @@ namespace Client
 	internal class GameApp : Game, IGameEnvironment, IKeyStateProvider
 	{
 		private readonly GameManager gameManager;
-		private readonly Dictionary<IGameObject, IPresenter> presenterCache;
+		private readonly Dictionary<object, IPresenter> presenterCache;
 
 		private SpriteBatch spriteBatch;
 		private Texture2D spaceshipTexture;
@@ -31,7 +31,7 @@ namespace Client
 			IsMouseVisible = true;
 
 			gameManager = new GameManager();
-			presenterCache = new Dictionary<IGameObject, IPresenter>();
+			presenterCache = new Dictionary<object, IPresenter>();
 		}
 
 		protected override void Initialize()
@@ -94,10 +94,8 @@ namespace Client
 				region.Offset(100, 0);
 			}
 
-			if (!spaceship.TryGetComponent(out AnimationIdProvider animationIdProvider)) {
-				animationIdProvider = new AnimationIdProvider(spaceship);
-				spaceship.AddComponent(animationIdProvider);
-			}
+			var animationIdProvider = new AnimationProvider(spaceship);
+			spaceship.AddComponent(animationIdProvider);
 
 			var presenter = new GameObjectPresenter(spaceship, animationIdProvider);
 			presenter.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
@@ -116,10 +114,8 @@ namespace Client
 			var aliveAnimation = new SpriteAnimation(asteroidTexture);
 			aliveAnimation.AppendRegion(new Rectangle(new Point(100, 0), new Point(100)));
 
-			if (!asteroid.TryGetComponent(out AnimationIdProvider animationIdProvider)) {
-				animationIdProvider = new AnimationIdProvider(asteroid);
-				asteroid.AddComponent(animationIdProvider);
-			}
+			var animationIdProvider = new AnimationProvider(asteroid);
+			asteroid.AddComponent(animationIdProvider);
 
 			var presenter = new GameObjectPresenter(asteroid, animationIdProvider);
 			presenter.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
@@ -130,23 +126,46 @@ namespace Client
 
 		IPresenter IGameEnvironment.GetBoundsPresenter(ICollider collider)
 		{
-			return new ColliderPresenter(collider, circleTexture);
+			if (presenterCache.TryGetValue(collider, out var presenter)) {
+				return presenter;
+			}
+
+			presenter = new ColliderPresenter(collider, circleTexture);
+			presenterCache.Add(collider, presenter);
+			return presenter;
 		}
 
 		IPresenter IGameEnvironment.GetSpaceshipPositionToHudPresenter(
 			IDataProvider<Vector2> positionProvider
 		) {
-			return new TextPresenter<Vector2>(
+			if (presenterCache.TryGetValue(positionProvider, out var presenter)) {
+				return presenter;
+			}
+
+			presenter = new TextPresenter<Vector2>(
 				font, Vector2.Zero, positionProvider, PositionToString
 			);
+
+			presenterCache.Add(positionProvider, presenter);
+			return presenter;
 
 			static string PositionToString(Vector2 position) =>
 				$"Coordinates: ({position.X:F0}; {position.Y:F0})";
 		}
 
-		IPresenter IGameEnvironment.GetSpaceshipAngleToHudPresenter(IDataProvider<float> angleProvider)
-		{
-			return new TextPresenter<float>(font, new Vector2(0, 24), angleProvider, AngleToString);
+		IPresenter IGameEnvironment.GetSpaceshipAngleToHudPresenter(
+			IDataProvider<float> angleProvider
+		) {
+			if (presenterCache.TryGetValue(angleProvider, out var presenter)) {
+				return presenter;
+			}
+
+			presenter = new TextPresenter<float>(
+				font, new Vector2(0, 24), angleProvider, AngleToString
+			);
+
+			presenterCache.Add(angleProvider, presenter);
+			return presenter;
 
 			static string AngleToString(float angle) => $"Angle: {angle:F0}";
 		}

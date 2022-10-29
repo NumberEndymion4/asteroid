@@ -3,11 +3,11 @@ using Microsoft.Xna.Framework;
 
 namespace Client.Components
 {
-	internal class AnimationIdProvider : Component
+	internal class AnimationProvider : Component
 	{
 		public string CurrentAnimationId { get; private set; }
 
-		public AnimationIdProvider(IGameObject owner) : base(owner)
+		public AnimationProvider(IGameObject owner) : base(owner)
 		{
 			CurrentAnimationId = string.Empty;
 		}

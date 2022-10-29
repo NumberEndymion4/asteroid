@@ -10,7 +10,7 @@ namespace Asteroids.Components
 
 		public ISet<int> SensitiveTo { get; }
 
-		public TakeDamageOnCollision(GameObject owner, IEnumerable<int> sensitiveToGroups)
+		public TakeDamageOnCollision(GameObject owner, params int[] sensitiveToGroups)
 			: base(owner)
 		{
 			damagedBy = new HashSet<IDamageProvider>();

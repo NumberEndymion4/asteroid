@@ -9,17 +9,17 @@ namespace Client.Presenters
 	internal class GameObjectPresenter : IPresenter
 	{
 		private readonly Dictionary<string, SpriteAnimation> animations;
+		private readonly AnimationProvider animationProvider;
 		private readonly IGameObject gameObject;
-		private readonly AnimationIdProvider animationProvider;
 
 		private string animationName;
 
 		public GameObjectPresenter(
-			IGameObject renderObject, AnimationIdProvider animationIdProvider
+			IGameObject renderObject, AnimationProvider animationIdProvider
 		) {
 			animations = new Dictionary<string, SpriteAnimation>();
-			gameObject = renderObject;
 			animationProvider = animationIdProvider;
+			gameObject = renderObject;
 		}
 
 		public void AddSpriteAnimation(string animationId, SpriteAnimation animation)

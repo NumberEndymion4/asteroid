@@ -35,34 +35,42 @@ namespace Asteroids
 					Scale = random.NextSingle(0.1f, 1f),
 				};
 
-				float radPerSec =
-					random.NextSign() *
-					random.NextSingle(MathF.PI / 24, MathF.PI / 16);
-
-				asteroid.AddComponent(new LinearRotation(asteroid, radPerSec));
-				asteroid.AddComponent(new HealthProvider(asteroid, 1));
-
 				var direction = Vector2.Transform(
 					Vector2.UnitX, Matrix.CreateRotationZ(random.NextSingle() * MathF.Tau)
 				);
+
+				float radianPerSecond =
+					random.NextSign() * random.NextSingle(MathF.PI / 24, MathF.PI / 16);
+
+				var asteroidCollider = new CircleCollider(asteroid, 65 / 2f);
+
+				asteroid.AddComponent(new LinearRotation(asteroid, radianPerSecond));
+				asteroid.AddComponent(new HealthProvider(asteroid, 1));
 
 				asteroid.AddComponent(
 					new LinearMovement(asteroid, direction, random.NextSingle(5f, 15f))
 				);
 
-				var asteroidCollider = new CircleCollider(asteroid, 65 / 2f);
 				asteroid.AddComponent(asteroidCollider);
 				asteroid.AddComponent(
 					new MakeDamageOnCollision(asteroid, Config.Instance.AsteroidGroup, 1)
 				);
 				asteroid.AddComponent(new TakeDamageOnCollision(
-					asteroid, new[] { Config.Instance.BulletGroup, Config.Instance.LaserGroup }
+					asteroid, Config.Instance.BulletGroup, Config.Instance.LaserGroup
 				));
 
-				gameObjects.Add(asteroid);
 				presenters.Add(() => environment.GetAsteroidPresenter(asteroid));
 				presenters.Add(() => environment.GetBoundsPresenter(asteroidCollider));
+				gameObjects.Add(asteroid);
 			}
+
+			var spaceship = new GameObject {
+				Position = new Vector2(100, 100),
+			};
+
+			var angleProvider = new AngleProvider(spaceship);
+			var positionProvider = new PositionProvider(spaceship);
+			var spaceshipCollider = new CircleCollider(spaceship, 55 / 2f);
 
 			var speedOptions = new KineticMovement.Options {
 				MaxSpeed = 400,
@@ -70,30 +78,23 @@ namespace Asteroids
 				Deceleration = 200,
 			};
 
-			var spaceship = new GameObject {
-				Position = new Vector2(100, 100),
-			};
 			spaceship.AddComponent(new InputRotation(spaceship, keys, MathF.PI));
 			spaceship.AddComponent(new KineticMovement(spaceship, keys, speedOptions));
 			spaceship.AddComponent(new HealthProvider(spaceship, 1));
 
-			var positionProvider = new PositionProvider(spaceship);
 			spaceship.AddComponent(positionProvider);
-			presenters.Add(() => environment.GetSpaceshipPositionToHudPresenter(positionProvider));
-
-			var angleProvider = new AngleProvider(spaceship);
 			spaceship.AddComponent(angleProvider);
-			presenters.Add(() => environment.GetSpaceshipAngleToHudPresenter(angleProvider));
 
-			var spaceshipCollider = new CircleCollider(spaceship, 55 / 2f);
 			spaceship.AddComponent(spaceshipCollider);
 			spaceship.AddComponent(
-				new TakeDamageOnCollision(spaceship, new[] { Config.Instance.AsteroidGroup })
+				new TakeDamageOnCollision(spaceship, Config.Instance.AsteroidGroup)
 			);
 
-			gameObjects.Add(spaceship);
 			presenters.Add(() => environment.GetSpaceshipPresenter(spaceship));
 			presenters.Add(() => environment.GetBoundsPresenter(spaceshipCollider));
+			presenters.Add(() => environment.GetSpaceshipAngleToHudPresenter(angleProvider));
+			presenters.Add(() => environment.GetSpaceshipPositionToHudPresenter(positionProvider));
+			gameObjects.Add(spaceship);
 		}
 
 		public void Update(GameTime gameTime)
