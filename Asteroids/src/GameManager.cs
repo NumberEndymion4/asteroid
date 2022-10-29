@@ -36,7 +36,7 @@ namespace Asteroids
 				};
 
 				float radPerSec =
-					(random.Next(2) == 0 ? -1 : 1) *
+					random.NextSign() *
 					random.NextSingle(MathF.PI / 24, MathF.PI / 16);
 
 				asteroid.AddComponent(new LinearRotation(asteroid, radPerSec));
