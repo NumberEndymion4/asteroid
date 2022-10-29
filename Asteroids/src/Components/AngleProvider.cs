@@ -6,7 +6,9 @@ namespace Asteroids.Components
 {
 	internal class AngleProvider : Component, IDataProvider<float>
 	{
-		public float Data { get; private set; }
+		public float Angle { get; private set; }
+
+		float IDataProvider<float>.Data => Angle;
 
 		public AngleProvider(IGameObject owner) : base(owner)
 		{
@@ -17,8 +19,8 @@ namespace Asteroids.Components
 			// MonoGame wraps angles in the range from 0 to PI so that
 			// positive values are in the lower semicircle (CW) and
 			// negative values are in the upper one (CCW).
-			float angle = Owner.Rotation;
-			Data = MathHelper.ToDegrees((angle > 0f ? MathF.Tau : 0f) - angle);
+			float rotationRad = Owner.Rotation;
+			Angle = MathHelper.ToDegrees((rotationRad > 0f ? MathF.Tau : 0f) - rotationRad);
 		}
 	}
 }

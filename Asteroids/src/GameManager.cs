@@ -105,10 +105,10 @@ namespace Asteroids
 			CollisionService.Instance.Update(gameTime);
 		}
 
-		public void Render(SpriteBatch spriteBatch)
+		public void Render(SpriteBatch spriteBatch, GameTime gameTime)
 		{
 			foreach (var getPresenter in presenters) {
-				getPresenter().Render(spriteBatch);
+				getPresenter().Render(spriteBatch, gameTime);
 			}
 		}
 	}

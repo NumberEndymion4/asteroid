@@ -1,4 +1,6 @@
-﻿using Asteroids;
+﻿using System.Collections.Generic;
+using Asteroids;
+using Client.Components;
 using Client.Presenters;
 using Core;
 using Microsoft.Xna.Framework;
@@ -10,6 +12,7 @@ namespace Client
 	internal class GameApp : Game, IGameEnvironment, IKeyStateProvider
 	{
 		private readonly GameManager gameManager;
+		private readonly Dictionary<IGameObject, IPresenter> presenterCache;
 
 		private SpriteBatch spriteBatch;
 		private Texture2D spaceshipTexture;
@@ -28,6 +31,7 @@ namespace Client
 			IsMouseVisible = true;
 
 			gameManager = new GameManager();
+			presenterCache = new Dictionary<IGameObject, IPresenter>();
 		}
 
 		protected override void Initialize()
@@ -49,10 +53,6 @@ namespace Client
 
 		protected override void Update(GameTime gameTime)
 		{
-			if (Keyboard.GetState().IsKeyDown(Keys.OemTilde)) {
-				gameTime.ElapsedGameTime /= 5;
-			}
-
 			if (Keyboard.GetState().IsKeyDown(Keys.Escape)) {
 				Exit();
 			} else {
@@ -67,7 +67,7 @@ namespace Client
 			GraphicsDevice.Clear(Config.Instance.BackgroundColor);
 
 			spriteBatch.Begin();
-			gameManager.Render(spriteBatch);
+			gameManager.Render(spriteBatch, gameTime);
 			spriteBatch.End();
 
 			base.Draw(gameTime);
@@ -80,16 +80,52 @@ namespace Client
 
 		IPresenter IGameEnvironment.GetSpaceshipPresenter(IGameObject spaceship)
 		{
-			return new GameObjectPresenter(
-				spaceship, spaceshipTexture, new Rectangle(Point.Zero, new Point(100))
-			);
+			if (presenterCache.TryGetValue(spaceship, out var cachedPresenter)) {
+				return cachedPresenter;
+			}
+
+			var region = new Rectangle(Point.Zero, new Point(100));
+			var aliveAnimation = new SpriteAnimation(spaceshipTexture);
+			aliveAnimation.AppendRegion(region);
+
+			var deadAimation = new SpriteAnimation(spaceshipTexture);
+			for (int i = 0; i < 8; ++i) {
+				deadAimation.AppendRegion(region);
+				region.Offset(100, 0);
+			}
+
+			if (!spaceship.TryGetComponent(out AnimationIdProvider animationIdProvider)) {
+				animationIdProvider = new AnimationIdProvider(spaceship);
+				spaceship.AddComponent(animationIdProvider);
+			}
+
+			var presenter = new GameObjectPresenter(spaceship, animationIdProvider);
+			presenter.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
+			presenter.AddSpriteAnimation(LifeCycleState.Dead.ToString(), deadAimation);
+
+			presenterCache.Add(spaceship, presenter);
+			return presenter;
 		}
 
 		IPresenter IGameEnvironment.GetAsteroidPresenter(IGameObject asteroid)
 		{
-			return new GameObjectPresenter(
-				asteroid, asteroidTexture, new Rectangle(new Point(100, 0), new Point(100))
-			);
+			if (presenterCache.TryGetValue(asteroid, out var cachedPresenter)) {
+				return cachedPresenter;
+			}
+
+			var aliveAnimation = new SpriteAnimation(asteroidTexture);
+			aliveAnimation.AppendRegion(new Rectangle(new Point(100, 0), new Point(100)));
+
+			if (!asteroid.TryGetComponent(out AnimationIdProvider animationIdProvider)) {
+				animationIdProvider = new AnimationIdProvider(asteroid);
+				asteroid.AddComponent(animationIdProvider);
+			}
+
+			var presenter = new GameObjectPresenter(asteroid, animationIdProvider);
+			presenter.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
+
+			presenterCache.Add(asteroid, presenter);
+			return presenter;
 		}
 
 		IPresenter IGameEnvironment.GetBoundsPresenter(ICollider collider)

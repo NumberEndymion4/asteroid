@@ -5,7 +5,9 @@ namespace Asteroids.Components
 {
 	internal class PositionProvider : Component, IDataProvider<Vector2>
 	{
-		public Vector2 Data { get; private set; }
+		public Vector2 Position => Owner.Position;
+
+		Vector2 IDataProvider<Vector2>.Data => Position;
 
 		public PositionProvider(IGameObject owner) : base(owner)
 		{
@@ -13,7 +15,6 @@ namespace Asteroids.Components
 
 		public override void Update(GameTime gameTime)
 		{
-			Data = Owner.Position;
 		}
 	}
 }

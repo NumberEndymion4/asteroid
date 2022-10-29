@@ -24,7 +24,7 @@ namespace Client.Presenters
 			dataConverter = dataToString;
 		}
 
-		public void Render(SpriteBatch spriteBatch)
+		public void Render(SpriteBatch spriteBatch, GameTime gameTime)
 		{
 			var text = dataConverter?.Invoke(provider.Data) ?? provider.Data.ToString();
 			spriteBatch.DrawString(font, text, position, Color.White);

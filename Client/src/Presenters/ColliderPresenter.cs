@@ -16,7 +16,7 @@ namespace Client.Presenters
 			texture = renderTexture;
 		}
 
-		public void Render(SpriteBatch spriteBatch)
+		public void Render(SpriteBatch spriteBatch, GameTime gameTime)
 		{
 			spriteBatch.Draw(
 				texture,

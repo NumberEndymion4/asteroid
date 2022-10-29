@@ -10,6 +10,7 @@ namespace Core
 
 		void Update(GameTime gameTime);
 
+		void AddComponent(IComponent component);
 		TComponent GetComponent<TComponent>() where TComponent : IComponent;
 		bool TryGetComponent<TComponent>(out TComponent component) where TComponent : IComponent;
 	}

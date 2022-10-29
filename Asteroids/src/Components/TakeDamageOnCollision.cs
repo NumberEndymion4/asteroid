@@ -6,32 +6,33 @@ namespace Asteroids.Components
 {
 	internal class TakeDamageOnCollision : Component, IDamageAcceptor
 	{
-		private HealthProvider health;
-		private int damageCount;
+		private readonly HashSet<IDamageProvider> damagedBy;
 
 		public ISet<int> SensitiveTo { get; }
 
 		public TakeDamageOnCollision(GameObject owner, IEnumerable<int> sensitiveToGroups)
 			: base(owner)
 		{
+			damagedBy = new HashSet<IDamageProvider>();
 			SensitiveTo = new HashSet<int>(sensitiveToGroups);
 			CollisionService.Instance.Collision += OnCollision;
 		}
 
 		public override void Update(GameTime gameTime)
 		{
-			health ??= Owner.GetComponent<HealthProvider>();
 		}
 
 		private void OnCollision(ICollider lhs, ICollider rhs)
 		{
 			if (
-				health != null &&
 				TryGetOpponent(lhs, rhs, out var opponent) &&
-				opponent.GetComponent<IDamageProvider>() is { } provider &&
-				SensitiveTo.Contains(provider.DamageGroup)
+				opponent.TryGetComponent(out IDamageProvider provider) &&
+				SensitiveTo.Contains(provider.DamageGroup) &&
+				Owner.TryGetComponent(out HealthProvider health)
 			) {
-				damageCount += provider.Damage;
+				if (damagedBy.Add(provider)) {
+					health.Hit(provider.Damage);
+				}
 			}
 		}
 
