@@ -95,12 +95,11 @@ namespace Client
 			}
 
 			var animationIdProvider = new AnimationProvider(spaceship);
+			animationIdProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
+			animationIdProvider.AddSpriteAnimation(LifeCycleState.Dead.ToString(), deadAimation);
 			spaceship.AddComponent(animationIdProvider);
 
 			var presenter = new GameObjectPresenter(spaceship, animationIdProvider);
-			presenter.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
-			presenter.AddSpriteAnimation(LifeCycleState.Dead.ToString(), deadAimation);
-
 			presenterCache.Add(spaceship, presenter);
 			return presenter;
 		}
@@ -115,11 +114,10 @@ namespace Client
 			aliveAnimation.AppendRegion(new Rectangle(new Point(100, 0), new Point(100)));
 
 			var animationIdProvider = new AnimationProvider(asteroid);
+			animationIdProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
 			asteroid.AddComponent(animationIdProvider);
 
 			var presenter = new GameObjectPresenter(asteroid, animationIdProvider);
-			presenter.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
-
 			presenterCache.Add(asteroid, presenter);
 			return presenter;
 		}

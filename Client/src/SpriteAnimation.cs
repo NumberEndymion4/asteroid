@@ -14,6 +14,7 @@ namespace Client
 		private TimeSpan startTime;
 
 		public Texture2D Texture { get; }
+		public bool IsPlaying { get; private set; }
 
 		public SpriteAnimation(Texture2D texture)
 		{
@@ -34,17 +35,29 @@ namespace Client
 		public void Start(GameTime gameTime)
 		{
 			startTime = gameTime.TotalGameTime;
+			IsPlaying = true;
 		}
 
 		public void Continue(GameTime gameTime, out Rectangle region)
 		{
-			int lastRegion = regions.Count - 1;
-
-			if (lastRegion < 0) {
+			int lastFrame = regions.Count - 1;
+			if (lastFrame < 0) {
 				region = Rectangle.Empty;
+				IsPlaying = false;
+				return;
+			}
+
+			if (!IsPlaying) {
+				region = regions[lastFrame];
+				return;
+			}
+
+			int frame = (int) ((gameTime.TotalGameTime - startTime) / FrameDuration);
+			if (frame > lastFrame) {
+				region = regions[lastFrame];
+				IsPlaying = false;
 			} else {
-				int frame = (int) ((gameTime.TotalGameTime - startTime) / FrameDuration);
-				region = regions[Math.Min(lastRegion, frame)];
+				region = regions[frame];
 			}
 		}
 	}
