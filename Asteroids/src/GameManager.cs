@@ -11,17 +11,19 @@ namespace Asteroids
 	public class GameManager
 	{
 		private readonly List<IGameObject> gameObjects;
-		private readonly List<Func<IPresenter>> presenters;
+		private readonly List<IPresenter> presenters;
 		private readonly Random random;
+
+		public bool IsSceneReady { get; private set; }
 
 		public GameManager()
 		{
 			gameObjects = new List<IGameObject>();
-			presenters = new List<Func<IPresenter>>();
+			presenters = new List<IPresenter>();
 			random = new Random();
 		}
 
-		public void Initialize(IGameEnvironment environment)
+		public void PrepareScene(IGameEnvironment environment)
 		{
 			var keys = environment.GetKeyStateProvider();
 
@@ -59,8 +61,8 @@ namespace Asteroids
 					asteroid, Config.Instance.BulletGroup, Config.Instance.LaserGroup
 				));
 
-				presenters.Add(() => environment.GetAsteroidPresenter(asteroid));
-				presenters.Add(() => environment.GetBoundsPresenter(asteroidCollider));
+				presenters.Add(environment.GetAsteroidPresenter(asteroid));
+				presenters.Add(environment.GetBoundsPresenter(asteroidCollider));
 				gameObjects.Add(asteroid);
 			}
 
@@ -90,11 +92,13 @@ namespace Asteroids
 				new TakeDamageOnCollision(spaceship, Config.Instance.AsteroidGroup)
 			);
 
-			presenters.Add(() => environment.GetSpaceshipPresenter(spaceship));
-			presenters.Add(() => environment.GetBoundsPresenter(spaceshipCollider));
-			presenters.Add(() => environment.GetSpaceshipAngleToHudPresenter(angleProvider));
-			presenters.Add(() => environment.GetSpaceshipPositionToHudPresenter(positionProvider));
+			presenters.Add(environment.GetSpaceshipPresenter(spaceship));
+			presenters.Add(environment.GetBoundsPresenter(spaceshipCollider));
+			presenters.Add(environment.GetSpaceshipAngleToHudPresenter(angleProvider));
+			presenters.Add(environment.GetSpaceshipPositionToHudPresenter(positionProvider));
 			gameObjects.Add(spaceship);
+
+			IsSceneReady = true;
 		}
 
 		public void Update(GameTime gameTime)
@@ -108,8 +112,8 @@ namespace Asteroids
 
 		public void Render(SpriteBatch spriteBatch, GameTime gameTime)
 		{
-			foreach (var getPresenter in presenters) {
-				getPresenter().Render(spriteBatch, gameTime);
+			foreach (var presenter in presenters) {
+				presenter.Render(spriteBatch, gameTime);
 			}
 		}
 	}
