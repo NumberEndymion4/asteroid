@@ -21,6 +21,10 @@
     <EmbeddedResource Include="icon.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Condition="'$(Configuration)' != 'Debug'" Remove="src\**\*.Debug.cs" />
+    <Compile Condition="'$(Configuration)' != 'Release'" Remove="src\**\*.Release.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>

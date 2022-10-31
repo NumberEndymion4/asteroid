@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Client
 {
-	internal class GameApp : Game, IGameEnvironment, IKeyStateProvider
+	internal partial class GameApp : Game, IGameEnvironment, IKeyStateProvider
 	{
 		private readonly GameManager gameManager;
 		private readonly Dictionary<object, IPresenter> presenterCache;
@@ -17,7 +17,6 @@ namespace Client
 		private SpriteBatch spriteBatch;
 		private Texture2D spaceshipTexture;
 		private Texture2D asteroidTexture;
-		private Texture2D circleTexture;
 		private SpriteFont font;
 
 		public GameApp()
@@ -45,9 +44,9 @@ namespace Client
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 			spaceshipTexture = Content.Load<Texture2D>("spaceship");
 			asteroidTexture = Content.Load<Texture2D>("asteroid");
-			circleTexture = Content.Load<Texture2D>("circle");
 			font = Content.Load<SpriteFont>("font");
 
+			LoadPartial();
 			base.LoadContent();
 		}
 
@@ -128,7 +127,7 @@ namespace Client
 				return presenter;
 			}
 
-			presenter = new ColliderPresenter(collider, circleTexture);
+			ObtainBoundsPresenterPartial(collider, ref presenter);
 			presenterCache.Add(collider, presenter);
 			return presenter;
 		}
@@ -172,5 +171,8 @@ namespace Client
 		{
 			return Keyboard.GetState().IsKeyDown(keys);
 		}
+
+		partial void LoadPartial();
+		partial void ObtainBoundsPresenterPartial(ICollider collider, ref IPresenter presenter);
 	}
 }
