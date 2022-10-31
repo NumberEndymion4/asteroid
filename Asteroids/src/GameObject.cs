@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Core;
 using Microsoft.Xna.Framework;
 
@@ -7,6 +8,8 @@ namespace Asteroids
 	public class GameObject : IGameObject
 	{
 		private readonly List<IComponent> components;
+
+		private bool isDisposed;
 
 		public Vector2 Position { get; set; }
 		public float Rotation { get; set; }
@@ -46,6 +49,32 @@ namespace Asteroids
 
 			component = default;
 			return false;
+		}
+
+		public void Dispose()
+		{
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected void Dispose(bool disposing)
+		{
+			if (isDisposed) {
+				return;
+			}
+
+			if (disposing) {
+				PerformDispose();
+				foreach (var component in components) {
+					component.Dispose();
+				}
+				components.Clear();
+			}
+			isDisposed = true;
+		}
+
+		protected virtual void PerformDispose()
+		{
 		}
 	}
 }

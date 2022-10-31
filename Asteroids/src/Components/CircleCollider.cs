@@ -23,5 +23,11 @@ namespace Asteroids.Components
 			center = Owner.Position;
 			scale = Owner.Scale;
 		}
+
+		protected override void PerformDispose()
+		{
+			CollisionService.Instance.Unregister(this);
+			base.PerformDispose();
+		}
 	}
 }

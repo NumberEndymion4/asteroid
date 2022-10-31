@@ -42,5 +42,13 @@ namespace Client.Components
 			}
 			playAnimation.Continue(gameTime, out playRegion);
 		}
+
+		protected override void PerformDispose()
+		{
+			animations.Clear();
+			playAnimation = null;
+			playAnimationName = null;
+			base.PerformDispose();
+		}
 	}
 }

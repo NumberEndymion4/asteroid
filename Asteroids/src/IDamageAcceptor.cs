@@ -5,6 +5,5 @@ namespace Asteroids
 {
 	internal interface IDamageAcceptor : IComponent
 	{
-		ISet<int> SensitiveTo { get; }
 	}
 }

@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace Core
 {
-	public interface IGameObject
+	public interface IGameObject : IDisposable
 	{
 		Vector2 Position { get; set; }
 		public float Rotation { get; set; }
