@@ -12,6 +12,8 @@ namespace Client.Presenters
 		private readonly IDataProvider<T> provider;
 		private readonly Func<T, string> dataConverter;
 
+		bool IPresenter.IsTargetLost => provider.Owner == null;
+
 		public TextPresenter(
 			SpriteFont spriteFont,
 			Vector2 textPosition,

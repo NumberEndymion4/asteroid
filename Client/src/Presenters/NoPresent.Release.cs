@@ -6,6 +6,8 @@ namespace Client.Presenters
 {
 	internal class NoPresent : IPresenter
 	{
+		public bool IsTargetLost => false;
+
 		void IPresenter.Render(SpriteBatch spriteBatch, GameTime gameTime)
 		{
 		}

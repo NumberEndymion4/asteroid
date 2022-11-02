@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using System;
+using Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -6,18 +7,20 @@ namespace Client.Presenters
 {
 	internal class GameObjectPresenter : IPresenter
 	{
-		private readonly IGameObject gameObject;
+		private readonly WeakReference<IGameObject> gameObjectRef;
 		private readonly IRenderRegion regionProvider;
+
+		bool IPresenter.IsTargetLost => !gameObjectRef.TryGetTarget(out _);
 
 		public GameObjectPresenter(IGameObject renderObject, IRenderRegion renderRegion)
 		{
-			gameObject = renderObject;
+			gameObjectRef = new WeakReference<IGameObject>(renderObject);
 			regionProvider = renderRegion;
 		}
 
 		void IPresenter.Render(SpriteBatch spriteBatch, GameTime gameTime)
 		{
-			if (!regionProvider.IsReady) {
+			if (!regionProvider.IsReady || !gameObjectRef.TryGetTarget(out var gameObject)) {
 				return;
 			}
 

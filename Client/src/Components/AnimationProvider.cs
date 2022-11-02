@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Client.Components
 {
-	internal class AnimationProvider : Component, IRenderRegion
+	internal class AnimationProvider : Component, IRenderRegion, ICompletable
 	{
 		private readonly Dictionary<string, SpriteAnimation> animations;
 
@@ -16,6 +16,7 @@ namespace Client.Components
 		public Texture2D Texture => playAnimation?.Texture;
 		public Rectangle Region => playRegion;
 		public bool IsReady => playAnimation != null;
+		public bool IsComplete => playAnimation?.IsPlaying != true;
 
 		public AnimationProvider(IGameObject owner) : base(owner)
 		{

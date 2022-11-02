@@ -107,7 +107,18 @@ namespace Asteroids
 				gameObject.Update(gameTime);
 			}
 
+			for (int i = gameObjects.Count - 1; i >= 0; --i) {
+				var gameObject = gameObjects[i];
+
+				if (gameObject.IsDead() && gameObject.IsComplete()) {
+					gameObject.Dispose();
+					gameObjects.RemoveAt(i);
+				}
+			}
+
 			CollisionService.Instance.Update(gameTime);
+
+			presenters.RemoveAll(presenter => presenter.IsTargetLost);
 		}
 
 		public void Render(SpriteBatch spriteBatch, GameTime gameTime)

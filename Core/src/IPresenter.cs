@@ -5,6 +5,8 @@ namespace Core
 {
 	public interface IPresenter
 	{
+		bool IsTargetLost { get; }
+
 		void Render(SpriteBatch spriteBatch, GameTime gameTime);
 	}
 }

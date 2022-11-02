@@ -10,6 +10,8 @@ namespace Client.Presenters
 		private readonly ICollider collider;
 		private readonly Texture2D texture;
 
+		bool IPresenter.IsTargetLost => collider.Owner == null;
+
 		public ColliderPresenter(ICollider renderCollider, Texture2D renderTexture)
 		{
 			collider = renderCollider;

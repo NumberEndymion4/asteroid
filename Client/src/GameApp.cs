@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Asteroids;
+﻿using Asteroids;
 using Client.Components;
 using Client.Presenters;
 using Core;
@@ -90,12 +89,12 @@ namespace Client
 				region.Offset(100, 0);
 			}
 
-			var animationIdProvider = new AnimationProvider(spaceship);
-			animationIdProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
-			animationIdProvider.AddSpriteAnimation(LifeCycleState.Dead.ToString(), deadAimation);
-			spaceship.AddComponent(animationIdProvider);
+			var animationProvider = new AnimationProvider(spaceship);
+			animationProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
+			animationProvider.AddSpriteAnimation(LifeCycleState.Dead.ToString(), deadAimation);
+			spaceship.AddComponent(animationProvider);
 
-			return new GameObjectPresenter(spaceship, animationIdProvider);
+			return new GameObjectPresenter(spaceship, animationProvider);
 		}
 
 		IPresenter IGameEnvironment.GetAsteroidPresenter(IGameObject asteroid)
@@ -103,11 +102,11 @@ namespace Client
 			var aliveAnimation = new SpriteAnimation(asteroidTexture);
 			aliveAnimation.AppendRegion(new Rectangle(new Point(100, 0), new Point(100)));
 
-			var animationIdProvider = new AnimationProvider(asteroid);
-			animationIdProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
-			asteroid.AddComponent(animationIdProvider);
+			var animationProvider = new AnimationProvider(asteroid);
+			animationProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
+			asteroid.AddComponent(animationProvider);
 
-			return new GameObjectPresenter(asteroid, animationIdProvider);
+			return new GameObjectPresenter(asteroid, animationProvider);
 		}
 
 		IPresenter IGameEnvironment.GetBoundsPresenter(ICollider collider)
