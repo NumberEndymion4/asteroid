@@ -11,6 +11,8 @@ namespace Core
 
 		public readonly Color BackgroundColor = new Color(64, 64, 64);
 
+		public readonly int EnemyCount = 100;
+
 		public readonly int AsteroidGroup = 1;
 		public readonly int BulletGroup = 2;
 		public readonly int LaserGroup = 3;

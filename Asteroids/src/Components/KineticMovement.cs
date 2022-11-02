@@ -8,7 +8,7 @@ namespace Asteroids.Components
 {
 	internal class KineticMovement : Component
 	{
-		public struct Options
+		public struct Settings
 		{
 			public float MaxSpeed;
 			public float Acceleration;
@@ -16,30 +16,30 @@ namespace Asteroids.Components
 		}
 
 		private readonly IKeyStateProvider keys;
-		private readonly Options options;
+		private readonly Settings settings;
 
 		private float speed;
 
 		public KineticMovement(
-			IGameObject owner, IKeyStateProvider keyStateProvider, Options speedOptions
+			IGameObject owner, IKeyStateProvider keyStateProvider, Settings speedSettings
 		) : base(
 			owner
 		) {
 			keys = keyStateProvider;
-			options = speedOptions;
+			settings = speedSettings;
 		}
 
 		public override void Update(GameTime gameTime)
 		{
 			float deltaSec = gameTime.ElapsedSeconds();
-			float desiredSpeed = keys.IsPressed(Keys.Up) ? options.MaxSpeed : 0;
+			float desiredSpeed = keys.IsPressed(Keys.Up) ? settings.MaxSpeed : 0;
 
 			float addSpeed = speed > desiredSpeed
-				? -options.Deceleration * deltaSec
-				: options.Acceleration * deltaSec;
+				? -settings.Deceleration * deltaSec
+				: settings.Acceleration * deltaSec;
 
 			var (sin, cos) = MathF.SinCos(Owner.Rotation);
-			speed = Math.Clamp(speed + addSpeed, 0, options.MaxSpeed);
+			speed = Math.Clamp(speed + addSpeed, 0, settings.MaxSpeed);
 			Owner.Position += new Vector2(cos, sin) * speed * deltaSec;
 		}
 	}

@@ -5,33 +5,44 @@ using Core;
 using Core.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Asteroids
 {
 	public class GameManager
 	{
+		private readonly IGameEnvironment environment;
 		private readonly List<IGameObject> gameObjects;
+		private readonly List<IGameObject> pendingObjects;
 		private readonly List<IPresenter> presenters;
+		private readonly List<IPresenter> pendingPresenters;
 		private readonly Random random;
 
-		public bool IsSceneReady { get; private set; }
+		private bool isSceneReady;
 
-		public GameManager()
+		public GameManager(IGameEnvironment gameEnvironment)
 		{
+			environment = gameEnvironment;
 			gameObjects = new List<IGameObject>();
+			pendingObjects = new List<IGameObject>();
 			presenters = new List<IPresenter>();
+			pendingPresenters = new List<IPresenter>();
 			random = new Random();
 		}
 
-		public void PrepareScene(IGameEnvironment environment)
+		public void EnsureScene()
 		{
+			if (isSceneReady) {
+				return;
+			}
+
 			var keys = environment.GetKeyStateProvider();
 
 			var screenCenter = new Vector2(
 				Config.Instance.WindowWidth / 2f, Config.Instance.WindowHeight / 2f
 			);
 
-			for (int i = 0; i < 20; ++i) {
+			for (int i = 0; i < Config.Instance.EnemyCount; ++i) {
 				var asteroid = new GameObject {
 					Position = screenCenter,
 					Scale = random.NextSingle(0.1f, 1f),
@@ -74,20 +85,31 @@ namespace Asteroids
 			var positionProvider = new PositionProvider(spaceship);
 			var spaceshipCollider = new CircleCollider(spaceship, 55 / 2f);
 
-			var speedOptions = new KineticMovement.Options {
+			var speedOptions = new KineticMovement.Settings {
 				MaxSpeed = 400,
 				Acceleration = 300,
 				Deceleration = 200,
 			};
 
+			var triggerSettings = new InputTrigger.Settings {
+				KeyStateProvider = keys,
+				TriggerOn = Keys.Space,
+				Interval = TimeSpan.FromMilliseconds(500),
+			};
+
+			var spacebarTrigger = new InputTrigger(spaceship, triggerSettings);
+			var gun = new SpawnByTrigger(spaceship, spacebarTrigger);
+			gun.Spawn += GunFired;
+
 			spaceship.AddComponent(new InputRotation(spaceship, keys, MathF.PI));
 			spaceship.AddComponent(new KineticMovement(spaceship, keys, speedOptions));
 			spaceship.AddComponent(new HealthProvider(spaceship, 1));
-
 			spaceship.AddComponent(positionProvider);
 			spaceship.AddComponent(angleProvider);
-
 			spaceship.AddComponent(spaceshipCollider);
+			spaceship.AddComponent(spacebarTrigger);
+			spaceship.AddComponent(gun);
+
 			spaceship.AddComponent(
 				new TakeDamageOnCollision(spaceship, Config.Instance.AsteroidGroup)
 			);
@@ -98,7 +120,7 @@ namespace Asteroids
 			presenters.Add(environment.GetSpaceshipPositionToHudPresenter(positionProvider));
 			gameObjects.Add(spaceship);
 
-			IsSceneReady = true;
+			isSceneReady = true;
 		}
 
 		public void Update(GameTime gameTime)
@@ -119,6 +141,12 @@ namespace Asteroids
 			CollisionService.Instance.Update(gameTime);
 
 			presenters.RemoveAll(presenter => presenter.IsTargetLost);
+
+			gameObjects.AddRange(pendingObjects);
+			pendingObjects.Clear();
+
+			presenters.AddRange(pendingPresenters);
+			pendingPresenters.Clear();
 		}
 
 		public void Render(SpriteBatch spriteBatch, GameTime gameTime)
@@ -126,6 +154,30 @@ namespace Asteroids
 			foreach (var presenter in presenters) {
 				presenter.Render(spriteBatch, gameTime);
 			}
+		}
+
+		private void GunFired(IComponent sender)
+		{
+			var position = sender.Owner.Position;
+			var rotation = sender.Owner.Rotation;
+
+			var bullet = new GameObject {
+				Position = position,
+				Rotation = rotation,
+			};
+
+			var direction = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(rotation));
+			var bulletCollider = new CircleCollider(bullet, 20 / 2f);
+
+			bullet.AddComponent(bulletCollider);
+			bullet.AddComponent(new HealthProvider(bullet, 1));
+			bullet.AddComponent(new LinearMovement(bullet, direction, 800f));
+			bullet.AddComponent(new MakeDamageOnCollision(bullet, Config.Instance.BulletGroup, 1));
+			bullet.AddComponent(new TakeDamageOnCollision(bullet, Config.Instance.AsteroidGroup));
+
+			pendingPresenters.Add(environment.GetBulletPresenter(bullet));
+			pendingPresenters.Add(environment.GetBoundsPresenter(bulletCollider));
+			pendingObjects.Add(bullet);
 		}
 	}
 }

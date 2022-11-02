@@ -10,11 +10,11 @@ namespace Client
 {
 	internal partial class GameApp : Game, IGameEnvironment, IKeyStateProvider
 	{
-		private readonly GameManager gameManager;
-
+		private GameManager gameManager;
 		private SpriteBatch spriteBatch;
 		private Texture2D spaceshipTexture;
 		private Texture2D asteroidTexture;
+		private Texture2D bulletTexture;
 		private SpriteFont font;
 
 		public GameApp()
@@ -26,12 +26,11 @@ namespace Client
 
 			Content.RootDirectory = "data";
 			IsMouseVisible = true;
-
-			gameManager = new GameManager();
 		}
 
 		protected override void Initialize()
 		{
+			gameManager = new GameManager(this);
 			base.Initialize();
 		}
 
@@ -40,6 +39,7 @@ namespace Client
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 			spaceshipTexture = Content.Load<Texture2D>("spaceship");
 			asteroidTexture = Content.Load<Texture2D>("asteroid");
+			bulletTexture = Content.Load<Texture2D>("bullet");
 			font = Content.Load<SpriteFont>("font");
 
 			LoadPartial();
@@ -48,9 +48,7 @@ namespace Client
 
 		protected override void Update(GameTime gameTime)
 		{
-			if (!gameManager.IsSceneReady) {
-				gameManager.PrepareScene(this);
-			}
+			gameManager.EnsureScene();
 
 			if (Keyboard.GetState().IsKeyDown(Keys.Escape)) {
 				Exit();
@@ -107,6 +105,18 @@ namespace Client
 			asteroid.AddComponent(animationProvider);
 
 			return new GameObjectPresenter(asteroid, animationProvider);
+		}
+
+		IPresenter IGameEnvironment.GetBulletPresenter(IGameObject bullet)
+		{
+			var aliveAnimation = new SpriteAnimation(bulletTexture);
+			aliveAnimation.AppendRegion(new Rectangle(Point.Zero, new Point(25, 12)));
+
+			var animationProvider = new AnimationProvider(bullet);
+			animationProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
+			bullet.AddComponent(animationProvider);
+
+			return new GameObjectPresenter(bullet, animationProvider);
 		}
 
 		IPresenter IGameEnvironment.GetBoundsPresenter(ICollider collider)
