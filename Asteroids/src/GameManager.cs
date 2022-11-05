@@ -42,7 +42,7 @@ namespace Asteroids
 				Config.Instance.WindowWidth / 2f, Config.Instance.WindowHeight / 2f
 			);
 
-			for (int i = 0; i < Config.Instance.EnemyCount; ++i) {
+			for (int i = 0; i < Config.Instance.AsteroidCount; ++i) {
 				var asteroid = new GameObject {
 					Position = screenCenter,
 					Scale = random.NextSingle(0.1f, 1f),
@@ -55,15 +55,16 @@ namespace Asteroids
 				float radianPerSecond =
 					random.NextSign() * random.NextSingle(MathF.PI / 24, MathF.PI / 16);
 
-				var asteroidCollider = new CircleCollider(asteroid, 65 / 2f);
+				var asteroidCollider = new CircleCollider(asteroid, Config.Instance.AsteroidRadius);
 
 				asteroid.AddComponent(new LinearRotation(asteroid, radianPerSecond));
 				asteroid.AddComponent(new HealthProvider(asteroid, 1));
 
-				asteroid.AddComponent(
-					new LinearMovement(asteroid, direction, random.NextSingle(5f, 15f))
+				float asteroidSpeed = random.NextSingle(
+					Config.Instance.AsteroidMinSpeed, Config.Instance.AsteroidMaxSpeed
 				);
 
+				asteroid.AddComponent(new LinearMovement(asteroid, direction, asteroidSpeed));
 				asteroid.AddComponent(asteroidCollider);
 				asteroid.AddComponent(
 					new MakeDamageOnCollision(asteroid, Config.Instance.AsteroidGroup, 1)
@@ -83,7 +84,7 @@ namespace Asteroids
 
 			var angleProvider = new AngleProvider(spaceship);
 			var positionProvider = new PositionProvider(spaceship);
-			var spaceshipCollider = new CircleCollider(spaceship, 55 / 2f);
+			var spaceshipCollider = new CircleCollider(spaceship, Config.Instance.SpaceshipRadius);
 
 			var speedOptions = new KineticMovement.Settings {
 				MaxSpeed = 400,
@@ -115,6 +116,10 @@ namespace Asteroids
 				new TakeDamageOnCollision(spaceship, Config.Instance.AsteroidGroup)
 			);
 
+			CreateAvatar(Orientation.Horizontal);
+			CreateAvatar(Orientation.Vertical);
+			CreateAvatar(Orientation.All);
+
 			presenters.Add(environment.GetSpaceshipPresenter(spaceship));
 			presenters.Add(environment.GetBoundsPresenter(spaceshipCollider));
 			presenters.Add(environment.GetSpaceshipAngleToHudPresenter(angleProvider));
@@ -122,6 +127,16 @@ namespace Asteroids
 			gameObjects.Add(spaceship);
 
 			isSceneReady = true;
+
+			void CreateAvatar(Orientation orientation)
+			{
+				var avatar = new ScreenMirrorAvatar(spaceship, orientation);
+				var avatarCollider = new CircleCollider(avatar, Config.Instance.SpaceshipRadius);
+				spaceship.AddComponent(avatar);
+				spaceship.AddComponent(avatarCollider);
+				presenters.Add(environment.GetSpaceshipPresenter(avatar));
+				presenters.Add(environment.GetBoundsPresenter(avatarCollider));
+			}
 		}
 
 		public void Update(GameTime gameTime)

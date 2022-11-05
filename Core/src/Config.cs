@@ -11,9 +11,13 @@ namespace Core
 
 		public readonly Color BackgroundColor = new Color(64, 64, 64);
 
-		public readonly int EnemyCount = 100;
-
+		public readonly int AsteroidCount = 100;
 		public readonly int AsteroidGroup = 1;
+		public readonly float AsteroidRadius = 65 / 2f;
+		public readonly float AsteroidMinSpeed = 25f;
+		public readonly float AsteroidMaxSpeed = 50f;
+
+		public readonly float SpaceshipRadius = 55 / 2f;
 		public readonly int BulletGroup = 2;
 		public readonly int LaserGroup = 3;
 

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids
 {
-	public class GameObject : IGameObject
+	public class GameObject : IGameObject, IEquatable<IGameObject>
 	{
 		private readonly List<IComponent> components;
 
@@ -49,6 +49,24 @@ namespace Asteroids
 
 			component = default;
 			return false;
+		}
+
+		public virtual bool Equals(IGameObject other)
+		{
+			return other?.GetType() == typeof(GameObject)
+				? ReferenceEquals(this, other)
+				: other?.Equals(this) == true;
+		}
+
+		public override bool Equals(object other)
+		{
+			return Equals(other as IGameObject);
+		}
+
+		public int GetHashCode2()
+		{
+			// No special code needed, just suppress warning CS0659.
+			return base.GetHashCode();
 		}
 
 		public void Dispose()
