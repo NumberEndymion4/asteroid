@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Core;
 using Core.Utils;
 using Microsoft.Xna.Framework;
@@ -36,9 +37,18 @@ namespace Asteroids
 			var newObjects = default(IReadOnlyCollection<IGameObject>);
 			var newPresenters = default(IReadOnlyCollection<IPresenter>);
 
+			var partsSettings = Enumerable.Repeat(
+				Config.Instance.SmallAsteroid, Config.Instance.AsteroidSpawnCount
+			);
+
 			for (int i = 0; i < Config.Instance.AsteroidCount; ++i) {
 				GameObjectFactory.Instance.CreateAsteroid(
-					environment, out newObjects, out newPresenters
+					environment,
+					Config.Instance.ScreenRect.Center.ToVector2(),
+					Config.Instance.BigAsteroid,
+					partsSettings,
+					out newObjects,
+					out newPresenters
 				);
 				gameObjects.AddRange(newObjects);
 				presenters.AddRange(newPresenters);

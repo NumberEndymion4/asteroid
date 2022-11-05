@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Asteroids.Components;
 using Core;
 using Core.Utils;
@@ -100,13 +101,16 @@ namespace Asteroids
 
 		public void CreateAsteroid(
 			IGameEnvironment environment,
+			Vector2 position,
+			ObstacleSettings settings,
+			IEnumerable<ObstacleSettings> partsSettings,
 			out IReadOnlyCollection<IGameObject> gameObjects,
 			out IReadOnlyCollection<IPresenter> presenters
 		)
 		{
 			var asteroid = new GameObject {
-				Position = Config.Instance.ScreenRect.Center.ToVector2(),
-				Scale = random.NextSingle(0.1f, 1f),
+				Position = position,
+				Scale = random.NextSingle(settings.ScaleMin, settings.ScaleMax),
 			};
 
 			var direction = Vector2.Transform(
@@ -114,7 +118,8 @@ namespace Asteroids
 			);
 
 			float radianPerSecond =
-				random.NextSign() * random.NextSingle(MathF.PI / 24, MathF.PI / 16);
+				random.NextSign() *
+				random.NextSingle(settings.AngleVelocityMin, settings.AngleVelocityMax);
 
 			var asteroidCollider = new CircleCollider(
 				asteroid, Config.Instance.AsteroidGroup, Config.Instance.AsteroidRadius
@@ -132,6 +137,23 @@ namespace Asteroids
 				asteroid, Config.Instance.BulletGroup, Config.Instance.LaserGroup
 			);
 
+			var spawnByDamage = new SpawnByTrigger(asteroid, takeDamageOnCollision);
+
+			spawnByDamage.Spawn += sender => {
+				foreach (var part in partsSettings) {
+					CreateAsteroid(
+						environment,
+						sender.Owner.Position,
+						part,
+						Enumerable.Empty<ObstacleSettings>(),
+						out var gameObjects,
+						out var bulletPresenters
+					);
+
+					CreateExternal?.Invoke(gameObjects, bulletPresenters);
+				}
+			};
+
 			asteroid.AddComponent(new LinearMovement(asteroid, direction, asteroidSpeed));
 			asteroid.AddComponent(new LinearRotation(asteroid, radianPerSecond));
 			asteroid.AddComponent(new HealthProvider(asteroid, 1));
@@ -139,6 +161,7 @@ namespace Asteroids
 			asteroid.AddComponent(asteroidCollider);
 			asteroid.AddComponent(makeDamageOnCollision);
 			asteroid.AddComponent(takeDamageOnCollision);
+			asteroid.AddComponent(spawnByDamage);
 
 			gameObjectBucket.Clear();
 			gameObjectBucket.Add(asteroid);

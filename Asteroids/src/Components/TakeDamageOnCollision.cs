@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Core;
 using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class TakeDamageOnCollision : Component, IDamageAcceptor
+	internal class TakeDamageOnCollision : Component, IDamageAcceptor, ITrigger
 	{
 		private readonly HashSet<IDamageProvider> damagedBy;
 		private readonly HashSet<int> sensitiveTo;
@@ -15,6 +16,8 @@ namespace Asteroids.Components
 			sensitiveTo = new HashSet<int>(sensitiveToGroups);
 			CollisionService.Instance.CollisionEnter += OnCollision;
 		}
+
+		public event Action Triggered;
 
 		public override void Update(GameTime gameTime)
 		{
@@ -38,6 +41,7 @@ namespace Asteroids.Components
 			) {
 				if (damagedBy.Add(provider)) {
 					health.Hit(provider.Damage);
+					Triggered?.Invoke();
 				}
 			}
 		}
