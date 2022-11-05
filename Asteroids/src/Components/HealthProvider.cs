@@ -27,6 +27,11 @@ namespace Asteroids.Components
 			}
 		}
 
+		public void Suicide()
+		{
+			acceptedDamage = healthPoints;
+		}
+
 		public override void Update(GameTime gameTime)
 		{
 		}

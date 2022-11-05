@@ -140,7 +140,11 @@ namespace Asteroids
 
 			CollisionService.Instance.Update(gameTime);
 
-			presenters.RemoveAll(presenter => presenter.IsTargetLost);
+			for (int i = presenters.Count - 1; i >= 0; --i) {
+				if (presenters[i].IsTargetLost) {
+					presenters.RemoveAt(i);
+				}
+			}
 
 			gameObjects.AddRange(pendingObjects);
 			pendingObjects.Clear();
@@ -174,6 +178,7 @@ namespace Asteroids
 			bullet.AddComponent(new LinearMovement(bullet, direction, 800f));
 			bullet.AddComponent(new MakeDamageOnCollision(bullet, Config.Instance.BulletGroup, 1));
 			bullet.AddComponent(new TakeDamageOnCollision(bullet, Config.Instance.AsteroidGroup));
+			bullet.AddComponent(new DieOutsideScreen(bullet));
 
 			pendingPresenters.Add(environment.GetBulletPresenter(bullet));
 			pendingPresenters.Add(environment.GetBoundsPresenter(bulletCollider));
