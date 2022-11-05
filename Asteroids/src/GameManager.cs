@@ -104,6 +104,7 @@ namespace Asteroids
 			spaceship.AddComponent(new InputRotation(spaceship, keys, MathF.PI));
 			spaceship.AddComponent(new KineticMovement(spaceship, keys, speedOptions));
 			spaceship.AddComponent(new HealthProvider(spaceship, 1));
+			spaceship.AddComponent(new WrapPositionOutsideScreen(spaceship));
 			spaceship.AddComponent(positionProvider);
 			spaceship.AddComponent(angleProvider);
 			spaceship.AddComponent(spaceshipCollider);

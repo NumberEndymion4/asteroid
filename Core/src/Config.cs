@@ -17,8 +17,11 @@ namespace Core
 		public readonly int BulletGroup = 2;
 		public readonly int LaserGroup = 3;
 
+		public Rectangle ScreenRect { get; }
+
 		private Config()
 		{
+			ScreenRect = new Rectangle(0, 0, WindowWidth, WindowHeight);
 		}
 	}
 }
