@@ -55,7 +55,9 @@ namespace Asteroids
 				float radianPerSecond =
 					random.NextSign() * random.NextSingle(MathF.PI / 24, MathF.PI / 16);
 
-				var asteroidCollider = new CircleCollider(asteroid, Config.Instance.AsteroidRadius);
+				var asteroidCollider = new CircleCollider(
+					asteroid, Config.Instance.AsteroidGroup, Config.Instance.AsteroidRadius
+				);
 
 				asteroid.AddComponent(new LinearRotation(asteroid, radianPerSecond));
 				asteroid.AddComponent(new HealthProvider(asteroid, 1));
@@ -84,7 +86,9 @@ namespace Asteroids
 
 			var angleProvider = new AngleProvider(spaceship);
 			var positionProvider = new PositionProvider(spaceship);
-			var spaceshipCollider = new CircleCollider(spaceship, Config.Instance.SpaceshipRadius);
+			var spaceshipCollider = new CircleCollider(
+				spaceship, Config.Instance.SpaceshipGroup, Config.Instance.SpaceshipRadius
+			);
 
 			var speedOptions = new KineticMovement.Settings {
 				MaxSpeed = 400,
@@ -131,7 +135,9 @@ namespace Asteroids
 			void CreateAvatar(Orientation orientation)
 			{
 				var avatar = new ScreenMirrorAvatar(spaceship, orientation);
-				var avatarCollider = new CircleCollider(avatar, Config.Instance.SpaceshipRadius);
+				var avatarCollider = new CircleCollider(
+					avatar, Config.Instance.SpaceshipGroup, Config.Instance.SpaceshipRadius
+				);
 				spaceship.AddComponent(avatar);
 				spaceship.AddComponent(avatarCollider);
 				presenters.Add(environment.GetSpaceshipPresenter(avatar));
@@ -187,7 +193,7 @@ namespace Asteroids
 			};
 
 			var direction = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(rotation));
-			var bulletCollider = new CircleCollider(bullet, 20 / 2f);
+			var bulletCollider = new CircleCollider(bullet, Config.Instance.BulletGroup, 20 / 2f);
 
 			bullet.AddComponent(bulletCollider);
 			bullet.AddComponent(new HealthProvider(bullet, 1));

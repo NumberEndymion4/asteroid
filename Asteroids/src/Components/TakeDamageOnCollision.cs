@@ -13,7 +13,7 @@ namespace Asteroids.Components
 		{
 			damagedBy = new HashSet<IDamageProvider>();
 			sensitiveTo = new HashSet<int>(sensitiveToGroups);
-			CollisionService.Instance.Collision += OnCollision;
+			CollisionService.Instance.CollisionEnter += OnCollision;
 		}
 
 		public override void Update(GameTime gameTime)
@@ -22,7 +22,7 @@ namespace Asteroids.Components
 
 		protected override void PerformDispose()
 		{
-			CollisionService.Instance.Collision -= OnCollision;
+			CollisionService.Instance.CollisionEnter -= OnCollision;
 			sensitiveTo.Clear();
 			damagedBy.Clear();
 			base.PerformDispose();

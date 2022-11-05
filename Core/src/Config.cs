@@ -17,7 +17,9 @@ namespace Core
 		public readonly float AsteroidMinSpeed = 25f;
 		public readonly float AsteroidMaxSpeed = 50f;
 
+		public readonly int SpaceshipGroup = 0;
 		public readonly float SpaceshipRadius = 55 / 2f;
+
 		public readonly int BulletGroup = 2;
 		public readonly int LaserGroup = 3;
 

@@ -10,11 +10,13 @@ namespace Asteroids.Components
 		private Vector2 center;
 		private float scale;
 
+		public int Group { get; }
 		public BoundingCircle Bounds => new BoundingCircle(center, radius * scale);
 
-		public CircleCollider(IGameObject owner, float colliderRadius) : base(owner)
+		public CircleCollider(IGameObject owner, int group, float colliderRadius) : base(owner)
 		{
 			radius = colliderRadius;
+			Group = group;
 			CollisionService.Instance.Register(this);
 		}
 

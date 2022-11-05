@@ -38,7 +38,8 @@ namespace Asteroids
 			return TryGetComponent(out TComponent component) ? component : default;
 		}
 
-		public bool TryGetComponent<TComponent>(out TComponent component) where TComponent : IComponent
+		public bool TryGetComponent<TComponent>(out TComponent component)
+			where TComponent : IComponent
 		{
 			foreach (var item in components) {
 				if (item is TComponent found) {
