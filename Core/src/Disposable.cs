@@ -20,8 +20,6 @@ namespace Core
 			isDisposed = true;
 		}
 
-		protected virtual void PerformDispose()
-		{
-		}
+		protected abstract void PerformDispose();
 	}
 }

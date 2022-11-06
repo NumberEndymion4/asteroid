@@ -32,7 +32,6 @@ namespace Asteroids.Components
 		{
 			CollisionService.Instance.Unregister(this);
 			Owner = null;
-			base.PerformDispose();
 		}
 	}
 }

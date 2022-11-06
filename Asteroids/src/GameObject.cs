@@ -74,7 +74,6 @@ namespace Asteroids
 				(component as IDisposable)?.Dispose();
 			}
 			components.Clear();
-			base.PerformDispose();
 		}
 	}
 }

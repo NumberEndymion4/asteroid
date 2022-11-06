@@ -33,7 +33,6 @@ namespace Asteroids.Components
 			trigger.Triggered -= OnTriggered;
 			trigger = null;
 			Spawn = null;
-			base.PerformDispose();
 		}
 
 		private void OnTriggered()

@@ -39,7 +39,6 @@ namespace Asteroids.Components
 		protected override void PerformDispose()
 		{
 			Triggered = null;
-			base.PerformDispose();
 		}
 	}
 }

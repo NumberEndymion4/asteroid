@@ -30,7 +30,6 @@ namespace Asteroids.Components
 			CollisionService.Instance.CollisionEnter -= OnCollision;
 			sensitiveTo.Clear();
 			damagedBy.Clear();
-			base.PerformDispose();
 		}
 
 		private void OnCollision(ICollider lhs, ICollider rhs)

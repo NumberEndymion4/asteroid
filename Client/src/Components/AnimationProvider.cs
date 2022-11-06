@@ -49,7 +49,6 @@ namespace Client.Components
 			animations.Clear();
 			playAnimation = null;
 			playAnimationName = null;
-			base.PerformDispose();
 		}
 	}
 }
