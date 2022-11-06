@@ -1,20 +1,16 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Core;
 using Core.Utils;
 using Microsoft.Xna.Framework;
 
 namespace Asteroids
 {
-	internal delegate void CollisionHandler(ICollider lhs, ICollider rhs);
-
 	internal class CollisionService
 	{
 		private readonly Dictionary<ICollider, HashSet<ICollider>> collisions;
 		private readonly HashSet<ICollider> entries;
 		private readonly List<ICollider> bucket;
-
-		public event CollisionHandler CollisionEnter;
-		public event CollisionHandler CollisionExit;
 
 		public static CollisionService Instance { get; } = new CollisionService();
 
@@ -32,12 +28,18 @@ namespace Asteroids
 
 		public void Unregister(ICollider collider)
 		{
-			foreach (var (_, collection) in collisions) {
-				collection.Remove(collider);
+			foreach (var (_, colliders) in collisions) {
+				colliders.Remove(collider);
 			}
 
 			collisions.Remove(collider);
 			entries.Remove(collider);
+		}
+
+		public bool TryGetCollision(ICollider left, out IReadOnlySet<ICollider> colliders)
+		{
+			colliders = collisions.GetValueOrDefault(left);
+			return colliders != null;
 		}
 
 		public void Update(GameTime gameTime)
@@ -54,19 +56,13 @@ namespace Asteroids
 					}
 
 					if (left.Bounds.IntersectsWith(right.Bounds)) {
-						if (
-							collisions.TryAppendValueSetOrCreate(left, right) &&
-							collisions.TryAppendValueSetOrCreate(right, left)
-						) {
-							CollisionEnter?.Invoke(left, right);
-						}
+						bool leftAdded = collisions.TryAppendValueSetOrCreate(left, right);
+						bool rightAdded = collisions.TryAppendValueSetOrCreate(right, left);
+						Debug.Assert(leftAdded == rightAdded);
 					} else {
-						if (
-							collisions.TryRemoveFromValueCollection(left, right) &&
-							collisions.TryRemoveFromValueCollection(right, left)
-						) {
-							CollisionExit?.Invoke(left, right);
-						}
+						bool leftRemoved = collisions.TryRemoveFromValueCollection(left, right);
+						bool rightRemoved = collisions.TryRemoveFromValueCollection(right, left);
+						Debug.Assert(leftRemoved == rightRemoved);
 					}
 				}
 			}

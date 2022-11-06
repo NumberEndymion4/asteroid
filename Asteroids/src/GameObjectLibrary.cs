@@ -46,10 +46,6 @@ namespace Asteroids
 				spaceship, Config.Instance.SpaceshipGroup, Config.Instance.SpaceshipRadius
 			);
 
-			var damageOnCollision = new TakeDamageOnCollision(
-				spaceship, Config.Instance.AsteroidGroup
-			);
-
 			var speedOptions = new KineticMovement.Settings {
 				MaxSpeed = 400,
 				Acceleration = 300,
@@ -81,7 +77,7 @@ namespace Asteroids
 			spaceship.AddComponent(angleProvider);
 			spaceship.AddComponent(spaceshipCollider);
 			spaceship.AddComponent(spacebarTrigger);
-			spaceship.AddComponent(damageOnCollision);
+			spaceship.AddComponent(new DamageAcceptor(Config.Instance.AsteroidGroup));
 			spaceship.AddComponent(gun);
 
 			gameObjectBucket.Clear();
@@ -129,13 +125,11 @@ namespace Asteroids
 				Config.Instance.AsteroidMinSpeed, Config.Instance.AsteroidMaxSpeed
 			);
 
-			var makeDamageOnCollision = new MakeDamageOnCollision(Config.Instance.AsteroidGroup, 1);
-
-			var takeDamageOnCollision = new TakeDamageOnCollision(
-				asteroid, Config.Instance.BulletGroup, Config.Instance.LaserGroup
+			var damageAcceptor = new DamageAcceptor(
+				Config.Instance.BulletGroup, Config.Instance.LaserGroup
 			);
 
-			var spawnByDamage = new SpawnByTrigger(takeDamageOnCollision);
+			var spawnByDamage = new SpawnByTrigger(damageAcceptor);
 
 			spawnByDamage.Spawn += (sender, position, rotation) => {
 				foreach (var part in partsSettings) {
@@ -158,8 +152,8 @@ namespace Asteroids
 			asteroid.AddComponent(new DieOutsideScreen());
 			asteroid.AddComponent(new PositionProvider());
 			asteroid.AddComponent(asteroidCollider);
-			asteroid.AddComponent(makeDamageOnCollision);
-			asteroid.AddComponent(takeDamageOnCollision);
+			asteroid.AddComponent(new DamageProvider(1));
+			asteroid.AddComponent(damageAcceptor);
 			asteroid.AddComponent(spawnByDamage);
 
 			gameObjectBucket.Clear();
@@ -190,8 +184,8 @@ namespace Asteroids
 			bullet.AddComponent(bulletCollider);
 			bullet.AddComponent(new HealthProvider(1));
 			bullet.AddComponent(new LinearMovement(direction, 800f));
-			bullet.AddComponent(new MakeDamageOnCollision(Config.Instance.BulletGroup, 1));
-			bullet.AddComponent(new TakeDamageOnCollision(bullet, Config.Instance.AsteroidGroup));
+			bullet.AddComponent(new DamageProvider(1));
+			bullet.AddComponent(new DamageAcceptor(Config.Instance.AsteroidGroup));
 			bullet.AddComponent(new DieOutsideScreen());
 
 			gameObjectBucket.Clear();

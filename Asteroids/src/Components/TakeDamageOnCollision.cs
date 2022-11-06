@@ -5,59 +5,39 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class TakeDamageOnCollision : Disposable, IComponent, ITrigger
+	internal class DamageAcceptor : IComponent, ITrigger
 	{
-		private readonly HashSet<IDamageProvider> damagedBy;
+		private readonly HashSet<object> damagedBy;
 		private readonly HashSet<int> sensitiveTo;
-		private readonly GameObject owner;
-
-		public TakeDamageOnCollision(GameObject colliderOwner, params int[] sensitiveToGroups)
-		{
-			owner = colliderOwner;
-			damagedBy = new HashSet<IDamageProvider>();
-			sensitiveTo = new HashSet<int>(sensitiveToGroups);
-			CollisionService.Instance.CollisionEnter += OnCollision;
-		}
 
 		public event Action Triggered;
 
+		public DamageAcceptor(params int[] sensitiveToGroups)
+		{
+			damagedBy = new HashSet<object>();
+			sensitiveTo = new HashSet<int>(sensitiveToGroups);
+		}
+
 		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
-		}
-
-		protected override void PerformDispose()
-		{
-			CollisionService.Instance.CollisionEnter -= OnCollision;
-			sensitiveTo.Clear();
-			damagedBy.Clear();
-		}
-
-		private void OnCollision(ICollider lhs, ICollider rhs)
-		{
 			if (
-				TryGetOpponent(lhs, rhs, out var opponent) &&
-				opponent.TryGetComponent(out IDamageProvider provider) &&
-				sensitiveTo.Contains(provider.DamageGroup) &&
-				owner.TryGetComponent(out HealthProvider health)
+				!gameObject.TryGetComponent(out ICollider ownCollider) ||
+				!gameObject.TryGetComponent(out HealthProvider healthProvider) ||
+				!CollisionService.Instance.TryGetCollision(ownCollider, out var colliders)
 			) {
-				if (damagedBy.Add(provider)) {
-					health.Hit(provider.Damage);
+				return;
+			}
+
+			foreach (var collider in colliders) {
+				if (
+					sensitiveTo.Contains(collider.Group) &&
+					collider.Owner.TryGetComponent(out DamageProvider provider) &&
+					damagedBy.Add(provider)
+				) {
+					healthProvider.Hit(provider.Damage);
 					Triggered?.Invoke();
 				}
 			}
-		}
-
-		private bool TryGetOpponent(
-			ICollider collider1, ICollider collider2, out IGameObject opponent
-		) {
-			if (Equals(owner, collider1?.Owner)) {
-				opponent = collider2?.Owner;
-			} else if (Equals(owner, collider2?.Owner)) {
-				opponent = collider1?.Owner;
-			} else {
-				opponent = null;
-			}
-			return opponent != null;
 		}
 	}
 }

@@ -3,14 +3,14 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class MakeDamageOnCollision : IComponent, IDamageProvider
+	internal class DamageProvider : IComponent, IDataProvider<int>
 	{
-		public int DamageGroup { get; }
 		public int Damage { get; }
 
-		public MakeDamageOnCollision(int damageGroup, int damage)
+		int IDataProvider<int>.Data => Damage;
+
+		public DamageProvider(int damage)
 		{
-			DamageGroup = damageGroup;
 			Damage = damage;
 		}
 

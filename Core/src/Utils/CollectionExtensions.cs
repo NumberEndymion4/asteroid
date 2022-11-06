@@ -8,10 +8,11 @@ namespace Core.Utils
 			this IDictionary<TKey, TSet> source, TKey key, TValue value
 		) where TSet : ISet<TValue>, new()
 		{
-			if (!source.TryGetValue(key, out var set)) {
-				set = new TSet();
+			if (source.TryGetValue(key, out TSet set)) {
+				return set.Add(value);
 			}
-			return set.Add(value);
+			source.Add(key, new TSet { value });
+			return true;
 		}
 
 		public static bool TryRemoveFromValueCollection<TKey, TValue, TCollection>(
