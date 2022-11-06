@@ -3,18 +3,18 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class MakeDamageOnCollision : Component, IDamageProvider
+	internal class MakeDamageOnCollision : IComponent, IDamageProvider
 	{
 		public int DamageGroup { get; }
 		public int Damage { get; }
 
-		public MakeDamageOnCollision(IGameObject owner, int damageGroup, int damage) : base(owner)
+		public MakeDamageOnCollision(int damageGroup, int damage)
 		{
 			DamageGroup = damageGroup;
 			Damage = damage;
 		}
 
-		public override void Update(GameTime gameTime)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
 		}
 	}

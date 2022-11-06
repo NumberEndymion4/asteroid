@@ -4,5 +4,6 @@
 	{
 		int Group { get; }
 		BoundingCircle Bounds { get; }
+		IGameObject Owner { get; }
 	}
 }

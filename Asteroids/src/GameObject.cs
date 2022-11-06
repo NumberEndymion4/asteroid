@@ -5,11 +5,9 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids
 {
-	public class GameObject : IGameObject, IEquatable<IGameObject>
+	public class GameObject : Disposable, IGameObject, IEquatable<IGameObject>
 	{
 		private readonly List<IComponent> components;
-
-		private bool isDisposed;
 
 		public Vector2 Position { get; set; }
 		public float Rotation { get; set; }
@@ -24,7 +22,7 @@ namespace Asteroids
 		public void Update(GameTime gameTime)
 		{
 			foreach (var component in components) {
-				component.Update(gameTime);
+				component.Update(this, gameTime);
 			}
 		}
 
@@ -64,36 +62,19 @@ namespace Asteroids
 			return Equals(other as IGameObject);
 		}
 
-		public int GetHashCode2()
+		public override int GetHashCode()
 		{
 			// No special code needed, just suppress warning CS0659.
 			return base.GetHashCode();
 		}
 
-		public void Dispose()
+		protected override void PerformDispose()
 		{
-			Dispose(disposing: true);
-			GC.SuppressFinalize(this);
-		}
-
-		protected void Dispose(bool disposing)
-		{
-			if (isDisposed) {
-				return;
+			foreach (var component in components) {
+				(component as IDisposable)?.Dispose();
 			}
-
-			if (disposing) {
-				PerformDispose();
-				foreach (var component in components) {
-					component.Dispose();
-				}
-				components.Clear();
-			}
-			isDisposed = true;
-		}
-
-		protected virtual void PerformDispose()
-		{
+			components.Clear();
+			base.PerformDispose();
 		}
 	}
 }

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Client.Components
 {
-	internal class AnimationProvider : Component, IRenderRegion, ICompletable
+	internal class AnimationProvider : Disposable, IComponent, IRenderRegion, ICompletable
 	{
 		private readonly Dictionary<string, SpriteAnimation> animations;
 
@@ -18,7 +18,7 @@ namespace Client.Components
 		public bool IsReady => playAnimation != null;
 		public bool IsComplete => playAnimation?.IsPlaying != true;
 
-		public AnimationProvider(IGameObject owner) : base(owner)
+		public AnimationProvider()
 		{
 			animations = new Dictionary<string, SpriteAnimation>();
 		}
@@ -28,9 +28,9 @@ namespace Client.Components
 			animations.TryAdd(animationId, animation);
 		}
 
-		public override void Update(GameTime gameTime)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
-			var lifeCycleProvider = Owner.GetComponent<IDataProvider<LifeCycleState>>();
+			var lifeCycleProvider = gameObject.GetComponent<IDataProvider<LifeCycleState>>();
 			var animationName = lifeCycleProvider?.Data.ToString() ?? string.Empty;
 
 			if (!animations.TryGetValue(animationName, out playAnimation)) {

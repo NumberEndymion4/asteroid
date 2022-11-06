@@ -35,14 +35,13 @@ namespace Asteroids
 			IGameEnvironment environment,
 			out IReadOnlyCollection<IGameObject> gameObjects,
 			out IReadOnlyCollection<IPresenter> presenters
-		)
-		{
+		) {
 			var spaceship = new GameObject {
 				Position = new Vector2(100, 100),
 			};
 
-			var angleProvider = new AngleProvider(spaceship);
-			var positionProvider = new PositionProvider(spaceship);
+			var angleProvider = new AngleProvider();
+			var positionProvider = new PositionProvider();
 			var spaceshipCollider = new CircleCollider(
 				spaceship, Config.Instance.SpaceshipGroup, Config.Instance.SpaceshipRadius
 			);
@@ -64,18 +63,20 @@ namespace Asteroids
 				Interval = TimeSpan.FromMilliseconds(500),
 			};
 
-			var spacebarTrigger = new InputTrigger(spaceship, triggerSettings);
-			var gun = new SpawnByTrigger(spaceship, spacebarTrigger);
+			var spacebarTrigger = new InputTrigger(triggerSettings);
+			var gun = new SpawnByTrigger(spacebarTrigger);
 
-			gun.Spawn += sender => {
-				CreateBullet(environment, sender, out var gameObjects, out var bulletPresenters);
+			gun.Spawn += (sender, position, rotation) => {
+				CreateBullet(
+					environment, position, rotation, out var gameObjects, out var bulletPresenters
+				);
 				CreateExternal?.Invoke(gameObjects, bulletPresenters);
 			};
 
-			spaceship.AddComponent(new InputRotation(spaceship, keys, MathF.PI));
-			spaceship.AddComponent(new KineticMovement(spaceship, keys, speedOptions));
-			spaceship.AddComponent(new HealthProvider(spaceship, 1));
-			spaceship.AddComponent(new WrapPositionOutsideScreen(spaceship));
+			spaceship.AddComponent(new InputRotation(keys, MathF.PI));
+			spaceship.AddComponent(new KineticMovement(keys, speedOptions));
+			spaceship.AddComponent(new HealthProvider(1));
+			spaceship.AddComponent(new WrapPositionOutsideScreen());
 			spaceship.AddComponent(positionProvider);
 			spaceship.AddComponent(angleProvider);
 			spaceship.AddComponent(spaceshipCollider);
@@ -106,8 +107,7 @@ namespace Asteroids
 			IEnumerable<ObstacleSettings> partsSettings,
 			out IReadOnlyCollection<IGameObject> gameObjects,
 			out IReadOnlyCollection<IPresenter> presenters
-		)
-		{
+		) {
 			var asteroid = new GameObject {
 				Position = position,
 				Scale = random.NextSingle(settings.ScaleMin, settings.ScaleMax),
@@ -129,21 +129,19 @@ namespace Asteroids
 				Config.Instance.AsteroidMinSpeed, Config.Instance.AsteroidMaxSpeed
 			);
 
-			var makeDamageOnCollision = new MakeDamageOnCollision(
-				asteroid, Config.Instance.AsteroidGroup, 1
-			);
+			var makeDamageOnCollision = new MakeDamageOnCollision(Config.Instance.AsteroidGroup, 1);
 
 			var takeDamageOnCollision = new TakeDamageOnCollision(
 				asteroid, Config.Instance.BulletGroup, Config.Instance.LaserGroup
 			);
 
-			var spawnByDamage = new SpawnByTrigger(asteroid, takeDamageOnCollision);
+			var spawnByDamage = new SpawnByTrigger(takeDamageOnCollision);
 
-			spawnByDamage.Spawn += sender => {
+			spawnByDamage.Spawn += (sender, position, rotation) => {
 				foreach (var part in partsSettings) {
 					CreateAsteroid(
 						environment,
-						sender.Owner.Position,
+						position,
 						part,
 						Enumerable.Empty<ObstacleSettings>(),
 						out var gameObjects,
@@ -154,10 +152,11 @@ namespace Asteroids
 				}
 			};
 
-			asteroid.AddComponent(new LinearMovement(asteroid, direction, asteroidSpeed));
-			asteroid.AddComponent(new LinearRotation(asteroid, radianPerSecond));
-			asteroid.AddComponent(new HealthProvider(asteroid, 1));
-			asteroid.AddComponent(new DieOutsideScreen(asteroid));
+			asteroid.AddComponent(new LinearMovement(direction, asteroidSpeed));
+			asteroid.AddComponent(new LinearRotation(radianPerSecond));
+			asteroid.AddComponent(new HealthProvider(1));
+			asteroid.AddComponent(new DieOutsideScreen());
+			asteroid.AddComponent(new PositionProvider());
 			asteroid.AddComponent(asteroidCollider);
 			asteroid.AddComponent(makeDamageOnCollision);
 			asteroid.AddComponent(takeDamageOnCollision);
@@ -175,14 +174,13 @@ namespace Asteroids
 
 		private void CreateBullet(
 			IGameEnvironment environment,
-			IComponent sender,
+			Vector2 position,
+			float rotation,
 			out IReadOnlyCollection<IGameObject> gameObjects,
 			out IReadOnlyCollection<IPresenter> presenters
-		)
-		{
-			float rotation = sender.Owner.Rotation;
+		) {
 			var bullet = new GameObject {
-				Position = sender.Owner.Position,
+				Position = position,
 				Rotation = rotation,
 			};
 
@@ -190,11 +188,11 @@ namespace Asteroids
 			var bulletCollider = new CircleCollider(bullet, Config.Instance.BulletGroup, 20 / 2f);
 
 			bullet.AddComponent(bulletCollider);
-			bullet.AddComponent(new HealthProvider(bullet, 1));
-			bullet.AddComponent(new LinearMovement(bullet, direction, 800f));
-			bullet.AddComponent(new MakeDamageOnCollision(bullet, Config.Instance.BulletGroup, 1));
+			bullet.AddComponent(new HealthProvider(1));
+			bullet.AddComponent(new LinearMovement(direction, 800f));
+			bullet.AddComponent(new MakeDamageOnCollision(Config.Instance.BulletGroup, 1));
 			bullet.AddComponent(new TakeDamageOnCollision(bullet, Config.Instance.AsteroidGroup));
-			bullet.AddComponent(new DieOutsideScreen(bullet));
+			bullet.AddComponent(new DieOutsideScreen());
 
 			gameObjectBucket.Clear();
 			gameObjectBucket.Add(bullet);
@@ -211,8 +209,7 @@ namespace Asteroids
 			IGameObject source,
 			Orientation orientation,
 			List<IPresenter> presenters
-		)
-		{
+		) {
 			var avatar = new ScreenMirrorAvatar(source, orientation);
 			var avatarCollider = new CircleCollider(
 				avatar, Config.Instance.SpaceshipGroup, Config.Instance.SpaceshipRadius

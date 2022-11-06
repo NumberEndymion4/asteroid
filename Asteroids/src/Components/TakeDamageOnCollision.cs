@@ -5,13 +5,15 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class TakeDamageOnCollision : Component, IDamageAcceptor, ITrigger
+	internal class TakeDamageOnCollision : Disposable, IComponent, ITrigger
 	{
 		private readonly HashSet<IDamageProvider> damagedBy;
 		private readonly HashSet<int> sensitiveTo;
+		private readonly GameObject owner;
 
-		public TakeDamageOnCollision(GameObject owner, params int[] sensitiveToGroups) : base(owner)
+		public TakeDamageOnCollision(GameObject colliderOwner, params int[] sensitiveToGroups)
 		{
+			owner = colliderOwner;
 			damagedBy = new HashSet<IDamageProvider>();
 			sensitiveTo = new HashSet<int>(sensitiveToGroups);
 			CollisionService.Instance.CollisionEnter += OnCollision;
@@ -19,7 +21,7 @@ namespace Asteroids.Components
 
 		public event Action Triggered;
 
-		public override void Update(GameTime gameTime)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
 		}
 
@@ -37,7 +39,7 @@ namespace Asteroids.Components
 				TryGetOpponent(lhs, rhs, out var opponent) &&
 				opponent.TryGetComponent(out IDamageProvider provider) &&
 				sensitiveTo.Contains(provider.DamageGroup) &&
-				Owner.TryGetComponent(out HealthProvider health)
+				owner.TryGetComponent(out HealthProvider health)
 			) {
 				if (damagedBy.Add(provider)) {
 					health.Hit(provider.Damage);
@@ -49,9 +51,9 @@ namespace Asteroids.Components
 		private bool TryGetOpponent(
 			ICollider collider1, ICollider collider2, out IGameObject opponent
 		) {
-			if (Equals(Owner, collider1?.Owner)) {
+			if (Equals(owner, collider1?.Owner)) {
 				opponent = collider2?.Owner;
-			} else if (Equals(Owner, collider2?.Owner)) {
+			} else if (Equals(owner, collider2?.Owner)) {
 				opponent = collider1?.Owner;
 			} else {
 				opponent = null;

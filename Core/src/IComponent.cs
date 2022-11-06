@@ -1,12 +1,9 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace Core
 {
-	public interface IComponent : IDisposable
+	public interface IComponent
 	{
-		IGameObject Owner { get; }
-
-		void Update(GameTime gameTime);
+		void Update(IGameObject gameObject, GameTime gameTime);
 	}
 }

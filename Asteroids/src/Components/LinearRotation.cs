@@ -4,18 +4,18 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class LinearRotation : Component
+	internal class LinearRotation : IComponent
 	{
 		private readonly float rps;
 
-		public LinearRotation(IGameObject owner, float radianPerSecond) : base(owner)
+		public LinearRotation(float radianPerSecond)
 		{
 			rps = radianPerSecond;
 		}
 
-		public override void Update(GameTime gameTime)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
-			Owner.Rotation += rps * gameTime.ElapsedSeconds();
+			gameObject.Rotation += rps * gameTime.ElapsedSeconds();
 		}
 	}
 }

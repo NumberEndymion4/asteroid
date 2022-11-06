@@ -3,19 +3,15 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class PositionProvider : Component, IDataProvider<Vector2>
+	internal class PositionProvider : IDataProvider<Vector2>
 	{
 		public Vector2 Position { get; private set; }
 
 		Vector2 IDataProvider<Vector2>.Data => Position;
 
-		public PositionProvider(IGameObject owner) : base(owner)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
-		}
-
-		public override void Update(GameTime gameTime)
-		{
-			Position = Owner.Position;
+			Position = gameObject.Position;
 		}
 	}
 }

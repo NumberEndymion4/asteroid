@@ -9,10 +9,10 @@ namespace Client.Presenters
 	{
 		private readonly SpriteFont font;
 		private readonly Vector2 position;
-		private readonly IDataProvider<T> provider;
+		private readonly WeakReference<IDataProvider<T>> providerRef;
 		private readonly Func<T, string> dataConverter;
 
-		bool IPresenter.IsTargetLost => provider.Owner == null;
+		bool IPresenter.IsTargetLost => !providerRef.TryGetTarget(out _);
 
 		public TextPresenter(
 			SpriteFont spriteFont,
@@ -22,12 +22,16 @@ namespace Client.Presenters
 		) {
 			font = spriteFont;
 			position = textPosition;
-			provider = textProvider;
+			providerRef = new WeakReference<IDataProvider<T>>(textProvider);
 			dataConverter = dataToString;
 		}
 
 		public void Render(SpriteBatch spriteBatch, GameTime gameTime)
 		{
+			if (!providerRef.TryGetTarget(out var provider)) {
+				return;
+			}
+
 			var text = dataConverter?.Invoke(provider.Data) ?? provider.Data.ToString();
 			spriteBatch.DrawString(font, text, position, Color.White);
 		}

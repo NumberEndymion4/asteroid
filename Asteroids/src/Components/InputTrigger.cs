@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Asteroids.Components
 {
-	internal class InputTrigger : Component, ITrigger
+	internal class InputTrigger : Disposable, IComponent, ITrigger
 	{
 		public struct Settings
 		{
@@ -19,12 +19,12 @@ namespace Asteroids.Components
 		private readonly Settings settings;
 		private TimeSpan lastTriggerTime;
 
-		public InputTrigger(IGameObject owner, Settings triggerSettings) : base(owner)
+		public InputTrigger(Settings triggerSettings)
 		{
 			settings = triggerSettings;
 		}
 
-		public override void Update(GameTime gameTime)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
 			if (!settings.KeyStateProvider.IsPressed(settings.TriggerOn)) {
 				return;
@@ -34,6 +34,12 @@ namespace Asteroids.Components
 				lastTriggerTime = gameTime.TotalGameTime;
 				Triggered?.Invoke();
 			}
+		}
+
+		protected override void PerformDispose()
+		{
+			Triggered = null;
+			base.PerformDispose();
 		}
 	}
 }

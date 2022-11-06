@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Asteroids.Components
 {
-	internal class KineticMovement : Component
+	internal class KineticMovement : IComponent
 	{
 		public struct Settings
 		{
@@ -20,16 +20,13 @@ namespace Asteroids.Components
 
 		private float speed;
 
-		public KineticMovement(
-			IGameObject owner, IKeyStateProvider keyStateProvider, Settings speedSettings
-		) : base(
-			owner
-		) {
+		public KineticMovement(IKeyStateProvider keyStateProvider, Settings speedSettings)
+		{
 			keys = keyStateProvider;
 			settings = speedSettings;
 		}
 
-		public override void Update(GameTime gameTime)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
 			float deltaSec = gameTime.ElapsedSeconds();
 			float desiredSpeed = keys.IsPressed(Keys.Up) ? settings.MaxSpeed : 0;
@@ -38,9 +35,9 @@ namespace Asteroids.Components
 				? -settings.Deceleration * deltaSec
 				: settings.Acceleration * deltaSec;
 
-			var (sin, cos) = MathF.SinCos(Owner.Rotation);
+			var (sin, cos) = MathF.SinCos(gameObject.Rotation);
 			speed = Math.Clamp(speed + addSpeed, 0, settings.MaxSpeed);
-			Owner.Position += new Vector2(cos, sin) * speed * deltaSec;
+			gameObject.Position += new Vector2(cos, sin) * speed * deltaSec;
 		}
 	}
 }

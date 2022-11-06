@@ -1,20 +1,10 @@
 ﻿using System;
-using Microsoft.Xna.Framework;
 
 namespace Core
 {
-	public abstract class Component : IComponent
+	public abstract class Disposable : IDisposable
 	{
 		private bool isDisposed;
-
-		public IGameObject Owner { get; private set; }
-
-		public Component(IGameObject owner)
-		{
-			Owner = owner;
-		}
-
-		public abstract void Update(GameTime gameTime);
 
 		public void Dispose()
 		{
@@ -26,7 +16,6 @@ namespace Core
 		{
 			if (!isDisposed && disposing) {
 				PerformDispose();
-				Owner = null;
 			}
 			isDisposed = true;
 		}

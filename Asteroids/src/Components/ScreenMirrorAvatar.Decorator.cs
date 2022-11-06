@@ -24,11 +24,9 @@ namespace Asteroids.Components
 			set => underlying.Scale = value;
 		}
 
-		IGameObject IComponent.Owner => underlying;
-
-		void IComponent.Update(GameTime gameTime)
+		void IComponent.Update(IGameObject gameObject, GameTime gameTime)
 		{
-			UpdateComponent(gameTime);
+			UpdateComponent(gameObject, gameTime);
 		}
 
 		void IGameObject.Update(GameTime gameTime)

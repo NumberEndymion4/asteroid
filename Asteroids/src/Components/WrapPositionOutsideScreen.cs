@@ -3,15 +3,11 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class WrapPositionOutsideScreen : Component
+	internal class WrapPositionOutsideScreen : IComponent
 	{
-		public WrapPositionOutsideScreen(IGameObject owner) : base(owner)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
-		}
-
-		public override void Update(GameTime gameTime)
-		{
-			var position = Owner.Position;
+			var position = gameObject.Position;
 			var screenRect = Config.Instance.ScreenRect;
 
 			if (position.X < screenRect.Left) {
@@ -26,7 +22,7 @@ namespace Asteroids.Components
 				position.Y -= screenRect.Height;
 			}
 
-			Owner.Position = position;
+			gameObject.Position = position;
 		}
 	}
 }

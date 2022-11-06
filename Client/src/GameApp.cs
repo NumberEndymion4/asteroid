@@ -87,7 +87,7 @@ namespace Client
 				region.Offset(100, 0);
 			}
 
-			var animationProvider = new AnimationProvider(spaceship);
+			var animationProvider = new AnimationProvider();
 			animationProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
 			animationProvider.AddSpriteAnimation(LifeCycleState.Dead.ToString(), deadAimation);
 			spaceship.AddComponent(animationProvider);
@@ -100,7 +100,7 @@ namespace Client
 			var aliveAnimation = new SpriteAnimation(asteroidTexture);
 			aliveAnimation.AppendRegion(new Rectangle(new Point(100, 0), new Point(100)));
 
-			var animationProvider = new AnimationProvider(asteroid);
+			var animationProvider = new AnimationProvider();
 			animationProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
 			asteroid.AddComponent(animationProvider);
 
@@ -112,7 +112,7 @@ namespace Client
 			var aliveAnimation = new SpriteAnimation(bulletTexture);
 			aliveAnimation.AppendRegion(new Rectangle(Point.Zero, new Point(25, 12)));
 
-			var animationProvider = new AnimationProvider(bullet);
+			var animationProvider = new AnimationProvider();
 			animationProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
 			bullet.AddComponent(animationProvider);
 

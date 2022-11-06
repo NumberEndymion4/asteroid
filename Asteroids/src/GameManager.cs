@@ -103,8 +103,7 @@ namespace Asteroids
 		private void OnCreateExternal(
 			IReadOnlyCollection<IGameObject> createdGameObjects,
 			IReadOnlyCollection<IPresenter> createdPresenters
-		)
-		{
+		) {
 			pendingObjects.AddRange(createdGameObjects);
 			pendingPresenters.AddRange(createdPresenters);
 		}

@@ -3,23 +3,27 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class SpawnByTrigger : Component, ISpawner
+	internal class SpawnByTrigger : Disposable, IComponent, ISpawner
 	{
 		public event SpawnHandler Spawn;
 
 		private ITrigger trigger;
 		private bool isTriggered;
 
-		public SpawnByTrigger(IGameObject owner, ITrigger spawnTrigger) : base(owner)
+		public SpawnByTrigger(ITrigger spawnTrigger)
 		{
 			trigger = spawnTrigger;
 			trigger.Triggered += OnTriggered;
 		}
 
-		public override void Update(GameTime gameTime)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
 			if (isTriggered) {
-				Spawn?.Invoke(this);
+				Spawn?.Invoke(
+					this,
+					gameObject.GetComponent<PositionProvider>()?.Position ?? Vector2.Zero,
+					gameObject.GetComponent<AngleProvider>()?.Radians ?? 0f
+				);
 			}
 			isTriggered = false;
 		}

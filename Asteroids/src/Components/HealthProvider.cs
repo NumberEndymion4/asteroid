@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class HealthProvider : Component, IDataProvider<LifeCycleState>
+	internal class HealthProvider : IDataProvider<LifeCycleState>
 	{
 		private readonly int healthPoints;
 
@@ -15,7 +15,7 @@ namespace Asteroids.Components
 		LifeCycleState IDataProvider<LifeCycleState>.Data =>
 			Health > 0 ? LifeCycleState.Alive : LifeCycleState.Dead;
 
-		public HealthProvider(IGameObject owner, int health) : base(owner)
+		public HealthProvider(int health)
 		{
 			healthPoints = health;
 		}
@@ -32,7 +32,7 @@ namespace Asteroids.Components
 			acceptedDamage = healthPoints;
 		}
 
-		public override void Update(GameTime gameTime)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
 		}
 	}

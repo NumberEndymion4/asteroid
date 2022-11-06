@@ -38,7 +38,7 @@ namespace Asteroids.Components
 			return underlying.GetHashCode();
 		}
 
-		private void UpdateComponent(GameTime gameTime)
+		private void UpdateComponent(IGameObject gameObject, GameTime gameTime)
 		{
 			var screenRect = Config.Instance.ScreenRect;
 			int xSign = underlying.Position.X < screenRect.Center.X ? 1 : -1;

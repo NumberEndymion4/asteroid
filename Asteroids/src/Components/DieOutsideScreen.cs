@@ -3,16 +3,12 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class DieOutsideScreen : Component
+	internal class DieOutsideScreen : IComponent
 	{
-		public DieOutsideScreen(IGameObject owner) : base(owner)
+		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
-		}
-
-		public override void Update(GameTime gameTime)
-		{
-			if (!Config.Instance.ScreenRect.Contains(Owner.Position)) {
-				Owner.GetComponent<HealthProvider>()?.Suicide();
+			if (!Config.Instance.ScreenRect.Contains(gameObject.Position)) {
+				gameObject.GetComponent<HealthProvider>()?.Suicide();
 			}
 		}
 	}
