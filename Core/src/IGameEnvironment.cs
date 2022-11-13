@@ -4,8 +4,6 @@ namespace Core
 {
 	public interface IGameEnvironment
 	{
-		IKeyStateProvider GetKeyStateProvider();
-
 		IPresenter GetSpaceshipPresenter(IGameObject spaceship);
 		IPresenter GetAsteroidPresenter(IGameObject asteroid);
 		IPresenter GetBulletPresenter(IGameObject asteroid);

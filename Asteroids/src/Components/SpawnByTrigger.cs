@@ -1,43 +1,29 @@
-﻿using Core;
+﻿using Asteroids.Broadcast;
+using Core;
 using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class SpawnByTrigger : Disposable, IComponent, ISpawner
+	internal class SpawnAsteroidOnHealth : IComponent
 	{
-		public event SpawnHandler Spawn;
+		private readonly int spawnOnHeath;
+		private readonly int spawnCount;
 
-		private ITrigger trigger;
-		private bool isTriggered;
-
-		public SpawnByTrigger(ITrigger spawnTrigger)
+		public SpawnAsteroidOnHealth(int health, int count)
 		{
-			trigger = spawnTrigger;
-			trigger.Triggered += OnTriggered;
+			spawnOnHeath = health;
+			spawnCount = count;
 		}
 
 		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
-			if (isTriggered) {
-				Spawn?.Invoke(
-					this,
-					gameObject.GetComponent<PositionProvider>()?.Position ?? Vector2.Zero,
-					gameObject.GetComponent<AngleProvider>()?.Radians ?? 0f
-				);
+			if (gameObject.GetComponent<HealthProvider>()?.Health == spawnOnHeath) {
+				for (int i = 0; i < spawnCount; ++i) {
+					BroadcastService.Instance.Schedule(
+						new GameObjectMessage("spawn_asteroid", gameObject)
+					);
+				}
 			}
-			isTriggered = false;
-		}
-
-		protected override void PerformDispose()
-		{
-			trigger.Triggered -= OnTriggered;
-			trigger = null;
-			Spawn = null;
-		}
-
-		private void OnTriggered()
-		{
-			isTriggered = true;
 		}
 	}
 }

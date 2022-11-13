@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Client
 {
-	internal partial class GameApp : Game, IGameEnvironment, IKeyStateProvider
+	internal partial class GameApp : Game, IGameEnvironment
 	{
 		private KeyboardBroadcast keyboardBroadcast;
 		private GameManager gameManager;
@@ -33,9 +33,9 @@ namespace Client
 		protected override void Initialize()
 		{
 			keyboardBroadcast = new KeyboardBroadcast();
-			keyboardBroadcast.RegisterTags(Keys.W, "start_accelerate", "stop_accelerate");
-			keyboardBroadcast.RegisterTags(Keys.A, "start_rotate_CCW", "stop_rotate_CCW");
-			keyboardBroadcast.RegisterTags(Keys.D, "start_rotate_CW", "stop_rotate_CW");
+			keyboardBroadcast.RegisterTags(Keys.Up, "start_accelerate", "stop_accelerate");
+			keyboardBroadcast.RegisterTags(Keys.Left, "start_rotate_CCW", "stop_rotate_CCW");
+			keyboardBroadcast.RegisterTags(Keys.Right, "start_rotate_CW", "stop_rotate_CW");
 			keyboardBroadcast.RegisterTags(Keys.Space, "start_shoot1", "stop_shoot1");
 			keyboardBroadcast.RegisterTags(Keys.Q, "start_shoot2", "stop_shoot2");
 
@@ -76,11 +76,6 @@ namespace Client
 			spriteBatch.End();
 
 			base.Draw(gameTime);
-		}
-
-		IKeyStateProvider IGameEnvironment.GetKeyStateProvider()
-		{
-			return this;
 		}
 
 		IPresenter IGameEnvironment.GetSpaceshipPresenter(IGameObject spaceship)
@@ -153,11 +148,6 @@ namespace Client
 			);
 
 			static string AngleToString(float angle) => $"Angle: {angle:F0}";
-		}
-
-		bool IKeyStateProvider.IsPressed(Keys keys)
-		{
-			return Keyboard.GetState().IsKeyDown(keys);
 		}
 
 		partial void LoadPartial();

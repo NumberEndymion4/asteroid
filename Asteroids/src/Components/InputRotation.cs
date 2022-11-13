@@ -1,32 +1,43 @@
 ﻿using Core;
 using Core.Utils;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace Asteroids.Components
 {
-	internal class InputRotation : IComponent
+	internal class InputRotation : Disposable, IComponent, IBroadcastListener
 	{
-		private readonly IKeyStateProvider keys;
 		private readonly float rps;
 
-		public InputRotation(IKeyStateProvider keyStateProvider, float radianPerSecond)
+		private bool isRotateCCW;
+		private bool isRotateCW;
+
+		public InputRotation(float radianPerSecond)
 		{
-			keys = keyStateProvider;
 			rps = radianPerSecond;
+			BroadcastService.Instance.Register(this);
 		}
 
 		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
-			bool isLeftPressed = keys.IsPressed(Keys.Left);
-			bool isRightPressed = keys.IsPressed(Keys.Right);
-
-			if (isLeftPressed == isRightPressed) {
-				return;
+			if (isRotateCW != isRotateCCW) {
+				float radians = (isRotateCW ? rps : -rps) * gameTime.ElapsedSeconds();
+				gameObject.Rotation = MathHelper.WrapAngle(gameObject.Rotation + radians);
 			}
+		}
 
-			float radians = (isRightPressed ? 1 : -1) * rps * gameTime.ElapsedSeconds();
-			gameObject.Rotation = MathHelper.WrapAngle(gameObject.Rotation + radians);
+		public void Notify(IBroadcastMessage message, GameTime gameTime)
+		{
+			switch (message.Tag) {
+				case "start_rotate_CCW": isRotateCCW = true; break;
+				case "stop_rotate_CCW": isRotateCCW = false; break;
+				case "start_rotate_CW": isRotateCW = true; break;
+				case "stop_rotate_CW": isRotateCW = false; break;
+			}
+		}
+
+		protected override void PerformDispose()
+		{
+			BroadcastService.Instance.Unregister(this);
 		}
 	}
 }

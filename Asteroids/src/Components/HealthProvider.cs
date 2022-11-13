@@ -8,32 +8,35 @@ namespace Asteroids.Components
 	{
 		private readonly int healthPoints;
 
+		private bool wasSuicide;
 		private int acceptedDamage;
 
-		public int Health => Math.Max(0, healthPoints - acceptedDamage);
+		public int Health { get; private set; }
 
 		LifeCycleState IDataProvider<LifeCycleState>.Data =>
-			Health > 0 ? LifeCycleState.Alive : LifeCycleState.Dead;
+			(!wasSuicide && Health > 0) ? LifeCycleState.Alive : LifeCycleState.Dead;
 
 		public HealthProvider(int health)
 		{
 			healthPoints = health;
+			Health = health;
 		}
 
 		public void Hit(int damage)
 		{
-			if (damage > 0 && Health > 0) {
-				acceptedDamage += damage;
+			if (damage > 0) {
+				acceptedDamage = Math.Min(healthPoints, acceptedDamage + damage);
 			}
 		}
 
 		public void Suicide()
 		{
-			acceptedDamage = healthPoints;
+			wasSuicide = true;
 		}
 
 		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
+			Health = Math.Max(0, healthPoints - acceptedDamage);
 		}
 	}
 }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Asteroids.Components;
 using Core;
 using Core.Utils;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace Asteroids
 {
@@ -17,8 +15,6 @@ namespace Asteroids
 		);
 
 		private static readonly Random random = new Random();
-
-		public event CreateExternalHandler CreateExternal;
 
 		private readonly List<IGameObject> gameObjectBucket;
 		private readonly List<IPresenter> presenterBucket;
@@ -52,33 +48,19 @@ namespace Asteroids
 				Deceleration = 200,
 			};
 
-			var keys = environment.GetKeyStateProvider();
-			var triggerSettings = new InputTrigger.Settings {
-				KeyStateProvider = keys,
-				TriggerOn = Keys.Space,
-				Interval = TimeSpan.FromMilliseconds(500),
-			};
+			var spawner = new InputTrigger(
+				"spawn_bullet", "start_shoot1", "stop_shoot1", TimeSpan.FromSeconds(0.5)
+			);
 
-			var spacebarTrigger = new InputTrigger(triggerSettings);
-			var gun = new SpawnByTrigger(spacebarTrigger);
-
-			gun.Spawn += (sender, position, rotation) => {
-				CreateBullet(
-					environment, position, rotation, out var gameObjects, out var bulletPresenters
-				);
-				CreateExternal?.Invoke(gameObjects, bulletPresenters);
-			};
-
-			spaceship.AddComponent(new InputRotation(keys, MathF.PI));
-			spaceship.AddComponent(new KineticMovement(keys, speedOptions));
+			spaceship.AddComponent(new InputRotation(MathF.PI));
+			spaceship.AddComponent(new KineticMovement(speedOptions));
 			spaceship.AddComponent(new HealthProvider(1));
 			spaceship.AddComponent(new WrapPositionOutsideScreen());
 			spaceship.AddComponent(positionProvider);
 			spaceship.AddComponent(angleProvider);
 			spaceship.AddComponent(spaceshipCollider);
-			spaceship.AddComponent(spacebarTrigger);
-			spaceship.AddComponent(new DamageAcceptor(Config.Instance.AsteroidGroup));
-			spaceship.AddComponent(gun);
+			spaceship.AddComponent(new TakeDamageOnCollision(Config.Instance.AsteroidGroup));
+			spaceship.AddComponent(spawner);
 
 			gameObjectBucket.Clear();
 			gameObjectBucket.Add(spaceship);
@@ -99,8 +81,7 @@ namespace Asteroids
 		public void CreateAsteroid(
 			IGameEnvironment environment,
 			Vector2 position,
-			ObstacleSettings settings,
-			IEnumerable<ObstacleSettings> partsSettings,
+			AsteroidSettings settings,
 			out IReadOnlyCollection<IGameObject> gameObjects,
 			out IReadOnlyCollection<IPresenter> presenters
 		) {
@@ -125,36 +106,19 @@ namespace Asteroids
 				Config.Instance.AsteroidMinSpeed, Config.Instance.AsteroidMaxSpeed
 			);
 
-			var damageAcceptor = new DamageAcceptor(
+			var damageAcceptor = new TakeDamageOnCollision(
 				Config.Instance.BulletGroup, Config.Instance.LaserGroup
 			);
 
-			var spawnByDamage = new SpawnByTrigger(damageAcceptor);
-
-			spawnByDamage.Spawn += (sender, position, rotation) => {
-				foreach (var part in partsSettings) {
-					CreateAsteroid(
-						environment,
-						position,
-						part,
-						Enumerable.Empty<ObstacleSettings>(),
-						out var gameObjects,
-						out var bulletPresenters
-					);
-
-					CreateExternal?.Invoke(gameObjects, bulletPresenters);
-				}
-			};
-
 			asteroid.AddComponent(new LinearMovement(direction, asteroidSpeed));
 			asteroid.AddComponent(new LinearRotation(radianPerSecond));
-			asteroid.AddComponent(new HealthProvider(1));
 			asteroid.AddComponent(new DieOutsideScreen());
 			asteroid.AddComponent(new PositionProvider());
 			asteroid.AddComponent(asteroidCollider);
 			asteroid.AddComponent(new DamageProvider(1));
 			asteroid.AddComponent(damageAcceptor);
-			asteroid.AddComponent(spawnByDamage);
+			asteroid.AddComponent(new HealthProvider(1));
+			asteroid.AddComponent(new SpawnAsteroidOnHealth(0, settings.PartsCount));
 
 			gameObjectBucket.Clear();
 			gameObjectBucket.Add(asteroid);
@@ -166,7 +130,7 @@ namespace Asteroids
 			presenters = presenterBucket;
 		}
 
-		private void CreateBullet(
+		public void CreateBullet(
 			IGameEnvironment environment,
 			Vector2 position,
 			float rotation,
@@ -185,7 +149,7 @@ namespace Asteroids
 			bullet.AddComponent(new HealthProvider(1));
 			bullet.AddComponent(new LinearMovement(direction, 800f));
 			bullet.AddComponent(new DamageProvider(1));
-			bullet.AddComponent(new DamageAcceptor(Config.Instance.AsteroidGroup));
+			bullet.AddComponent(new TakeDamageOnCollision(Config.Instance.AsteroidGroup));
 			bullet.AddComponent(new DieOutsideScreen());
 
 			gameObjectBucket.Clear();

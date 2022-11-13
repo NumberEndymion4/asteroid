@@ -6,6 +6,7 @@ namespace Core
 	public partial class BroadcastService
 	{
 		private readonly HashSet<IBroadcastListener> listeners;
+		private readonly List<IBroadcastListener> bucket;
 		private readonly Queue<IBroadcastMessage> messages;
 
 		public static BroadcastService Instance { get; } = new BroadcastService();
@@ -13,6 +14,7 @@ namespace Core
 		private BroadcastService()
 		{
 			listeners = new HashSet<IBroadcastListener>();
+			bucket = new List<IBroadcastListener>();
 			messages = new Queue<IBroadcastMessage>();
 		}
 
@@ -31,13 +33,17 @@ namespace Core
 			messages.Enqueue(message);
 		}
 
-		public void Notify(GameTime gameTime)
+		public void Update(GameTime gameTime)
 		{
+			bucket.AddRange(listeners);
+
 			while (messages.TryDequeue(out var message)) {
-				foreach (var listener in listeners) {
-					listener.Notify(message, gameTime);
+				for (int i = 0; i < bucket.Count; ++i) {
+					bucket[i].Notify(message, gameTime);
 				}
 			}
+
+			bucket.Clear();
 		}
 	}
 }

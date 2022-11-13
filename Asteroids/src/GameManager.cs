@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using Asteroids.Broadcast;
+using Asteroids.Components;
 using Core;
 using Core.Utils;
 using Microsoft.Xna.Framework;
@@ -7,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Asteroids
 {
-	public class GameManager
+	public class GameManager : Disposable, IBroadcastListener
 	{
 		private readonly IGameEnvironment environment;
 		private readonly List<IGameObject> gameObjects;
@@ -25,7 +26,7 @@ namespace Asteroids
 			presenters = new List<IPresenter>();
 			pendingPresenters = new List<IPresenter>();
 
-			GameObjectFactory.Instance.CreateExternal += OnCreateExternal;
+			BroadcastService.Instance.Register(this);
 		}
 
 		public void EnsureScene()
@@ -37,16 +38,11 @@ namespace Asteroids
 			var newObjects = default(IReadOnlyCollection<IGameObject>);
 			var newPresenters = default(IReadOnlyCollection<IPresenter>);
 
-			var partsSettings = Enumerable.Repeat(
-				Config.Instance.SmallAsteroid, Config.Instance.AsteroidSpawnCount
-			);
-
 			for (int i = 0; i < Config.Instance.AsteroidCount; ++i) {
 				GameObjectFactory.Instance.CreateAsteroid(
 					environment,
 					Config.Instance.ScreenRect.Center.ToVector2(),
 					Config.Instance.BigAsteroid,
-					partsSettings,
 					out newObjects,
 					out newPresenters
 				);
@@ -70,11 +66,10 @@ namespace Asteroids
 			}
 
 			CollisionService.Instance.Update(gameTime);
-			BroadcastService.Instance.Notify(gameTime);
+			BroadcastService.Instance.Update(gameTime);
 
 			for (int i = gameObjects.Count - 1; i >= 0; --i) {
 				var gameObject = gameObjects[i];
-
 				if (gameObject.IsDead() && gameObject.IsComplete()) {
 					gameObject.Dispose();
 					gameObjects.RemoveAt(i);
@@ -101,12 +96,34 @@ namespace Asteroids
 			}
 		}
 
-		private void OnCreateExternal(
-			IReadOnlyCollection<IGameObject> createdGameObjects,
-			IReadOnlyCollection<IPresenter> createdPresenters
-		) {
-			pendingObjects.AddRange(createdGameObjects);
-			pendingPresenters.AddRange(createdPresenters);
+		protected override void PerformDispose()
+		{
+			BroadcastService.Instance.Unregister(this);
+		}
+
+		void IBroadcastListener.Notify(IBroadcastMessage message, GameTime gameTime)
+		{
+			if (message is GameObjectMessage { Tag: "spawn_bullet" } spawnBullet) {
+				GameObjectFactory.Instance.CreateBullet(
+					environment,
+					spawnBullet.Sender.GetComponent<PositionProvider>()?.Position ?? Vector2.Zero,
+					spawnBullet.Sender.GetComponent<AngleProvider>()?.Radians ?? 0f,
+					out var bulletObjects,
+					out var bulletPresenters
+				);
+				pendingObjects.AddRange(bulletObjects);
+				pendingPresenters.AddRange(bulletPresenters);
+			} else if (message is GameObjectMessage { Tag: "spawn_asteroid" } spawnAsteroid) {
+				GameObjectFactory.Instance.CreateAsteroid(
+					environment,
+					spawnAsteroid.Sender.GetComponent<PositionProvider>()?.Position ?? Vector2.Zero,
+					Config.Instance.SmallAsteroid,
+					out var asteroidObjects,
+					out var asteroidPresenters
+				);
+				pendingObjects.AddRange(asteroidObjects);
+				pendingPresenters.AddRange(asteroidPresenters);
+			}
 		}
 	}
 }

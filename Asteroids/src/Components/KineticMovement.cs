@@ -2,11 +2,10 @@
 using Core;
 using Core.Utils;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace Asteroids.Components
 {
-	internal class KineticMovement : IComponent
+	internal class KineticMovement : Disposable, IComponent, IBroadcastListener
 	{
 		public struct Settings
 		{
@@ -15,29 +14,43 @@ namespace Asteroids.Components
 			public float Deceleration;
 		}
 
-		private readonly IKeyStateProvider keys;
 		private readonly Settings settings;
 
+		private float desiredSpeed;
 		private float speed;
 
-		public KineticMovement(IKeyStateProvider keyStateProvider, Settings speedSettings)
+		public KineticMovement(Settings speedSettings)
 		{
-			keys = keyStateProvider;
 			settings = speedSettings;
+			BroadcastService.Instance.Register(this);
 		}
 
 		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
 			float deltaSec = gameTime.ElapsedSeconds();
-			float desiredSpeed = keys.IsPressed(Keys.Up) ? settings.MaxSpeed : 0;
 
-			float addSpeed = speed > desiredSpeed
-				? -settings.Deceleration * deltaSec
-				: settings.Acceleration * deltaSec;
+			float addSpeed = speed.CompareTo(desiredSpeed) switch {
+				-1 => settings.Acceleration * deltaSec,
+				1 => -settings.Deceleration * deltaSec,
+				_ => 0f
+			};
 
 			var (sin, cos) = MathF.SinCos(gameObject.Rotation);
 			speed = Math.Clamp(speed + addSpeed, 0, settings.MaxSpeed);
 			gameObject.Position += new Vector2(cos, sin) * speed * deltaSec;
+		}
+
+		public void Notify(IBroadcastMessage message, GameTime gameTime)
+		{
+			switch (message.Tag) {
+				case "start_accelerate": desiredSpeed = settings.MaxSpeed; break;
+				case "stop_accelerate": desiredSpeed = 0; break;
+			}
+		}
+
+		protected override void PerformDispose()
+		{
+			BroadcastService.Instance.Unregister(this);
 		}
 	}
 }
