@@ -144,10 +144,10 @@ namespace Client
 			return new GameObjectPresenter(laser, animationProvider);
 		}
 
-		IPresenter IGameEnvironment.GetBoundsPresenter(ICollider collider)
+		IPresenter IGameEnvironment.GetCircleColliderPresenter(CircleCollider collider)
 		{
 			IPresenter presenter = null;
-			ObtainBoundsPresenterPartial(collider, ref presenter);
+			ObtainCircleColliderPresenterPartial(collider, ref presenter);
 			return presenter;
 		}
 
@@ -173,6 +173,9 @@ namespace Client
 		}
 
 		partial void LoadPartial();
-		partial void ObtainBoundsPresenterPartial(ICollider collider, ref IPresenter presenter);
+
+		partial void ObtainCircleColliderPresenterPartial(
+			CircleCollider collider, ref IPresenter presenter
+		);
 	}
 }

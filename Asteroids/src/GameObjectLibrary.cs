@@ -73,7 +73,7 @@ namespace Asteroids
 			CreateSpaceshipAvatar(environment, spaceship, Orientation.All, presenterBucket);
 
 			presenterBucket.Add(environment.GetSpaceshipPresenter(spaceship));
-			presenterBucket.Add(environment.GetBoundsPresenter(spaceshipCollider));
+			presenterBucket.Add(environment.GetCircleColliderPresenter(spaceshipCollider));
 			presenterBucket.Add(environment.GetSpaceshipAngleToHudPresenter(angleProvider));
 			presenterBucket.Add(environment.GetSpaceshipPositionToHudPresenter(positionProvider));
 			presenters = presenterBucket;
@@ -127,7 +127,7 @@ namespace Asteroids
 
 			presenterBucket.Clear();
 			presenterBucket.Add(environment.GetAsteroidPresenter(asteroid));
-			presenterBucket.Add(environment.GetBoundsPresenter(asteroidCollider));
+			presenterBucket.Add(environment.GetCircleColliderPresenter(asteroidCollider));
 			presenters = presenterBucket;
 		}
 
@@ -159,7 +159,7 @@ namespace Asteroids
 
 			presenterBucket.Clear();
 			presenterBucket.Add(environment.GetBulletPresenter(bullet));
-			presenterBucket.Add(environment.GetBoundsPresenter(bulletCollider));
+			presenterBucket.Add(environment.GetCircleColliderPresenter(bulletCollider));
 			presenters = presenterBucket;
 		}
 
@@ -202,7 +202,7 @@ namespace Asteroids
 			source.AddComponent(avatar);
 			source.AddComponent(avatarCollider);
 			presenters.Add(environment.GetSpaceshipPresenter(avatar));
-			presenters.Add(environment.GetBoundsPresenter(avatarCollider));
+			presenters.Add(environment.GetCircleColliderPresenter(avatarCollider));
 
 			return source;
 		}

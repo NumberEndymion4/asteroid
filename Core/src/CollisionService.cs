@@ -55,7 +55,7 @@ namespace Core
 						continue;
 					}
 
-					if (left.Bounds.IntersectsWith(right.Bounds)) {
+					if (HasIntersection(left, right)) {
 						bool leftAdded = collisions.TryAppendValueSetOrCreate(left, right);
 						bool rightAdded = collisions.TryAppendValueSetOrCreate(right, left);
 						Debug.Assert(leftAdded == rightAdded);
@@ -68,6 +68,16 @@ namespace Core
 			}
 
 			bucket.Clear();
+		}
+
+		private bool HasIntersection(ICollider left, ICollider right)
+		{
+			var leftCircle = left as CircleCollider;
+			var rightCircle = right as CircleCollider;
+
+			float radiusSum = leftCircle.Radius + rightCircle.Radius;
+			float distanceSquared = Vector2.DistanceSquared(leftCircle.Center, rightCircle.Center);
+			return distanceSquared < radiusSum * radiusSum;
 		}
 	}
 }

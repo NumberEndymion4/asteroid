@@ -14,9 +14,9 @@ namespace Client
 			circleTexture = Content.Load<Texture2D>("circle");
 		}
 
-		partial void ObtainBoundsPresenterPartial(ICollider collider, ref IPresenter presenter)
+		partial void ObtainCircleColliderPresenterPartial(CircleCollider collider, ref IPresenter presenter)
 		{
-			presenter = new ColliderPresenter(collider, circleTexture);
+			presenter = new CircleColliderPresenter(collider, circleTexture);
 		}
 	}
 }

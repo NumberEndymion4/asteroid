@@ -2,30 +2,22 @@
 
 namespace Core.Collisions
 {
-	public class CircleCollider : Disposable, ICollider
+	public class CircleCollider : GameObjectCollider
 	{
 		private readonly float radius;
 
-		public int Group { get; }
-		public BoundingCircle Bounds => new BoundingCircle(Owner.Position, radius * Owner.Scale);
-		public IGameObject Owner { get; private set; }
+		public Vector2 Center => Owner.Position;
+		public float Radius => radius * Owner.Scale;
+		public float Diameter => 2 * Radius;
 
 		public CircleCollider(IGameObject owner, int group, float colliderRadius)
+			: base(owner, group)
 		{
 			radius = colliderRadius;
-			Owner = owner;
-			Group = group;
-			CollisionService.Instance.Register(this);
 		}
 
-		public void Update(IGameObject gameObject, GameTime gameTime)
+		public override void Update(IGameObject gameObject, GameTime gameTime)
 		{
-		}
-
-		protected override void PerformDispose()
-		{
-			CollisionService.Instance.Unregister(this);
-			Owner = null;
 		}
 	}
 }
