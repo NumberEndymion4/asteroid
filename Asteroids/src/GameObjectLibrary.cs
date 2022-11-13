@@ -175,9 +175,17 @@ namespace Asteroids
 				Rotation = rotation,
 			};
 
+			var length = Config.Instance.ScreenRect.Size.ToVector2().Length();
+			var direction = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(rotation));
+
+			var collider = new LineCollider(
+				laser, Config.Instance.LaserGroup, position, position + direction * length
+			);
+
 			laser.AddComponent(new HealthProvider(1));
 			laser.AddComponent(new SuicideOnTime(TimeSpan.Zero));
 			laser.AddComponent(new DamageProvider(1));
+			laser.AddComponent(collider);
 
 			gameObjectBucket.Clear();
 			gameObjectBucket.Add(laser);

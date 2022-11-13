@@ -83,14 +83,16 @@ namespace Client
 
 		IPresenter IGameEnvironment.GetSpaceshipPresenter(IGameObject spaceship)
 		{
-			var bounds = new Rectangle(Point.Zero, new Point(100));
+			const int Radius = 100;
+
+			var bounds = new Rectangle(Point.Zero, new Point(Radius));
 			var aliveAnimation = new SpriteAnimation(spaceshipTexture);
 			aliveAnimation.AppendRegion(bounds);
 
 			var deadAnimation = new SpriteAnimation(spaceshipTexture);
 			for (int i = 0; i < 8; ++i) {
 				deadAnimation.AppendRegion(bounds);
-				bounds.Offset(100, 0);
+				bounds.Offset(Radius, 0);
 			}
 
 			var animationProvider = new AnimationProvider();
@@ -103,8 +105,10 @@ namespace Client
 
 		IPresenter IGameEnvironment.GetAsteroidPresenter(IGameObject asteroid)
 		{
+			const int Radius = 100;
+
 			var aliveAnimation = new SpriteAnimation(asteroidTexture);
-			aliveAnimation.AppendRegion(new Rectangle(new Point(100, 0), new Point(100)));
+			aliveAnimation.AppendRegion(new Rectangle(new Point(Radius, 0), new Point(Radius)));
 
 			var animationProvider = new AnimationProvider();
 			animationProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
@@ -115,8 +119,11 @@ namespace Client
 
 		IPresenter IGameEnvironment.GetBulletPresenter(IGameObject bullet)
 		{
+			const int Width = 25;
+			const int Height = 12;
+
 			var aliveAnimation = new SpriteAnimation(bulletTexture);
-			aliveAnimation.AppendRegion(new Rectangle(Point.Zero, new Point(25, 12)));
+			aliveAnimation.AppendRegion(new Rectangle(Point.Zero, new Point(Width, Height)));
 
 			var animationProvider = new AnimationProvider();
 			animationProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
@@ -127,14 +134,18 @@ namespace Client
 
 		IPresenter IGameEnvironment.GetLaserPresenter(IGameObject laser)
 		{
-			var bounds = new Rectangle(Point.Zero, new Point(100, 10));
+			const int Width = 100;
+			const int Height = 10;
+
+			var bounds = new Rectangle(Point.Zero, new Point(Width, Height));
 			var origin = new Vector2(0, 0.5f);
-			var scale = new Vector2(100, 1f);
+			var screenSize = Config.Instance.ScreenRect.Size.ToVector2();
+			var scale = new Vector2(screenSize.Length() / Width, 1f);
 			var deadAnimation = new SpriteAnimation(laserTexture);
 
 			for (int i = 0; i < 6; ++i) {
 				deadAnimation.AppendRegion(bounds, origin, scale);
-				bounds.Offset(0, 10);
+				bounds.Offset(0, Height);
 			}
 
 			var animationProvider = new AnimationProvider();
@@ -165,8 +176,10 @@ namespace Client
 		IPresenter IGameEnvironment.GetSpaceshipAngleToHudPresenter(
 			IDataProvider<float> angleProvider
 		) {
+			const int Height = 24;
+
 			return new TextPresenter<float>(
-				font, new Vector2(0, 24), angleProvider, AngleToString
+				font, new Vector2(0, Height), angleProvider, AngleToString
 			);
 
 			static string AngleToString(float angle) => $"Angle: {angle:F0}";
