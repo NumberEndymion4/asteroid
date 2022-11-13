@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class InputTrigger : Disposable, IComponent, IBroadcastListener
+	internal class IntervalBroadcastListener : Disposable, IComponent, IBroadcastListener
 	{
 		private readonly string tag;
 		private readonly string startOn;
@@ -15,18 +15,13 @@ namespace Asteroids.Components
 		private TimeSpan? lastTriggerTime;
 		private bool isTriggered;
 
-		public InputTrigger(string spawnTag, string tagStart)
-			: this(spawnTag, tagStart, null, TimeSpan.Zero)
-		{
-		}
-
-		public InputTrigger(
-			string spawnTag, string tagStart, string tagStop, TimeSpan spawnInterval
+		public IntervalBroadcastListener(
+			string broadcastTag, string tagStart, string tagStop, TimeSpan broadcastInterval
 		) {
-			tag = spawnTag;
+			tag = broadcastTag;
 			startOn = tagStart;
 			stopOn = tagStop;
-			interval = spawnInterval;
+			interval = broadcastInterval;
 			BroadcastService.Instance.Register(this);
 		}
 
@@ -38,10 +33,6 @@ namespace Asteroids.Components
 
 			BroadcastService.Instance.Schedule(new GameObjectMessage(tag, gameObject));
 			lastTriggerTime = gameTime.TotalGameTime;
-
-			if (stopOn == null) {
-				isTriggered = false;
-			}
 		}
 
 		protected override void PerformDispose()

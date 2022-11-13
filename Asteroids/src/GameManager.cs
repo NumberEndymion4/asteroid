@@ -35,8 +35,8 @@ namespace Asteroids
 				return;
 			}
 
-			var newObjects = default(IReadOnlyCollection<IGameObject>);
-			var newPresenters = default(IReadOnlyCollection<IPresenter>);
+			IReadOnlyCollection<IGameObject> newObjects;
+			IReadOnlyCollection<IPresenter> newPresenters;
 
 			for (int i = 0; i < Config.Instance.AsteroidCount; ++i) {
 				GameObjectFactory.Instance.CreateAsteroid(

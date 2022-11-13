@@ -9,11 +9,6 @@ namespace Asteroids
 {
 	internal class GameObjectFactory
 	{
-		public delegate void CreateExternalHandler(
-			IReadOnlyCollection<IGameObject> createdGameObjects,
-			IReadOnlyCollection<IPresenter> createdPresenters
-		);
-
 		private static readonly Random random = new Random();
 
 		private readonly List<IGameObject> gameObjectBucket;
@@ -48,7 +43,7 @@ namespace Asteroids
 				Deceleration = 200,
 			};
 
-			var spawner = new InputTrigger(
+			var spawner = new IntervalBroadcastListener(
 				"spawn_bullet", "start_shoot1", "stop_shoot1", TimeSpan.FromSeconds(0.5)
 			);
 

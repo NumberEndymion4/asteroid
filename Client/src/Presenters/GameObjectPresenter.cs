@@ -8,19 +8,23 @@ namespace Client.Presenters
 	internal class GameObjectPresenter : IPresenter
 	{
 		private readonly WeakReference<IGameObject> gameObjectRef;
-		private readonly IRenderRegion regionProvider;
+		private readonly WeakReference<IRenderRegion> regionProviderRef;
 
 		bool IPresenter.IsTargetLost => !gameObjectRef.TryGetTarget(out _);
 
 		public GameObjectPresenter(IGameObject renderObject, IRenderRegion renderRegion)
 		{
 			gameObjectRef = new WeakReference<IGameObject>(renderObject);
-			regionProvider = renderRegion;
+			regionProviderRef = new WeakReference<IRenderRegion>(renderRegion);
 		}
 
 		void IPresenter.Render(SpriteBatch spriteBatch, GameTime gameTime)
 		{
-			if (!regionProvider.IsReady || !gameObjectRef.TryGetTarget(out var gameObject)) {
+			if (
+				!regionProviderRef.TryGetTarget(out var regionProvider) ||
+				!gameObjectRef.TryGetTarget(out var gameObject) ||
+				!regionProvider.IsReady
+			) {
 				return;
 			}
 
