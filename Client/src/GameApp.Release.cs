@@ -6,8 +6,9 @@ namespace Client
 {
 	internal partial class GameApp
 	{
-		partial void ObtainBoundsPresenterPartial(ICollider collider, ref IPresenter presenter)
-		{
+		partial void ObtainCircleColliderPresenterPartial(
+			CircleCollider collider, ref IPresenter presenter
+		) {
 			presenter = new NoPresent();
 		}
 	}
