@@ -1,4 +1,5 @@
-﻿using Core.Collisions;
+﻿using System;
+using Core.Collisions;
 using Microsoft.Xna.Framework;
 
 namespace Core
@@ -13,5 +14,6 @@ namespace Core
 
 		IPresenter GetSpaceshipPositionToHudPresenter(IDataProvider<Vector2> positionProvider);
 		IPresenter GetSpaceshipAngleToHudPresenter(IDataProvider<float> angleProvider);
+		IPresenter GetLaserCooldownToHudPresenter(IDataProvider<TimeSpan> cooldownProvider);
 	}
 }

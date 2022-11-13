@@ -45,11 +45,19 @@ namespace Asteroids
 			};
 
 			var fireBullet = new IntervalBroadcastListener(
-				"spawn_bullet", "start_shoot1", "stop_shoot1", Config.Instance.BulletFireRate
+				"spawn_bullet",
+				"start_shoot1",
+				"stop_shoot1",
+				Config.Instance.BulletFireRate,
+				resetInterval: false
 			);
 
 			var fireLaser = new IntervalBroadcastListener(
-				"spawn_laser", "start_shoot2", "stop_shoot2", Config.Instance.LaserFireRate
+				"spawn_laser",
+				"start_shoot2",
+				"stop_shoot2",
+				Config.Instance.LaserFireRate,
+				resetInterval: true
 			);
 
 			spaceship.AddComponent(new InputRotation(MathF.PI));
@@ -76,6 +84,7 @@ namespace Asteroids
 			presenterBucket.Add(environment.GetCircleColliderPresenter(spaceshipCollider));
 			presenterBucket.Add(environment.GetSpaceshipAngleToHudPresenter(angleProvider));
 			presenterBucket.Add(environment.GetSpaceshipPositionToHudPresenter(positionProvider));
+			presenterBucket.Add(environment.GetLaserCooldownToHudPresenter(fireLaser));
 			presenters = presenterBucket;
 		}
 

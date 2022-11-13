@@ -1,4 +1,5 @@
-﻿using Asteroids;
+﻿using System;
+using Asteroids;
 using Client.Broadcast;
 using Client.Components;
 using Client.Presenters;
@@ -165,8 +166,9 @@ namespace Client
 		IPresenter IGameEnvironment.GetSpaceshipPositionToHudPresenter(
 			IDataProvider<Vector2> positionProvider
 		) {
+			const int Offset = 10;
 			return new TextPresenter<Vector2>(
-				font, Vector2.Zero, positionProvider, PositionToString
+				font, new Vector2(Offset), positionProvider, PositionToString
 			);
 
 			static string PositionToString(Vector2 position) =>
@@ -176,13 +178,29 @@ namespace Client
 		IPresenter IGameEnvironment.GetSpaceshipAngleToHudPresenter(
 			IDataProvider<float> angleProvider
 		) {
-			const int Height = 24;
+			const int Offset = 10;
+			const int PositionY = 24;
 
 			return new TextPresenter<float>(
-				font, new Vector2(0, Height), angleProvider, AngleToString
+				font, new Vector2(Offset, Offset + PositionY), angleProvider, AngleToString
 			);
 
 			static string AngleToString(float angle) => $"Angle: {angle:F0}";
+		}
+
+		IPresenter IGameEnvironment.GetLaserCooldownToHudPresenter(
+			IDataProvider<TimeSpan> cooldownProvider
+		) {
+			const int Offset = 10;
+			const int PositionY = 48;
+
+			return new TextPresenter<TimeSpan>(
+				font, new Vector2(Offset, Offset + PositionY), cooldownProvider, CooldownToString
+			);
+
+			static string CooldownToString(TimeSpan timeSpan) => timeSpan > TimeSpan.Zero
+				? $"Laser: {timeSpan.TotalSeconds:F2} sec"
+				: $"Laser READY";
 		}
 
 		partial void LoadPartial();

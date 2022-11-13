@@ -52,7 +52,7 @@ namespace Core
 		public readonly TimeSpan BulletFireRate = TimeSpan.FromSeconds(0.5);
 
 		public readonly int LaserGroup = 3;
-		public readonly TimeSpan LaserFireRate = TimeSpan.FromSeconds(0.5);
+		public readonly TimeSpan LaserFireRate = TimeSpan.FromSeconds(5);
 
 		public Rectangle ScreenRect { get; }
 
