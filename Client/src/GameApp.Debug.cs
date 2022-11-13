@@ -1,5 +1,6 @@
 ﻿using Client.Presenters;
 using Core;
+using Core.Collisions;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Client

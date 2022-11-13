@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Core
+namespace Core.Collisions
 {
 	public readonly struct BoundingCircle
 	{

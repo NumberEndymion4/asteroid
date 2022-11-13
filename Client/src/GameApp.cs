@@ -3,6 +3,7 @@ using Client.Broadcast;
 using Client.Components;
 using Client.Presenters;
 using Core;
+using Core.Collisions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

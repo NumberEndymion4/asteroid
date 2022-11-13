@@ -1,9 +1,8 @@
-﻿using Core;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
-namespace Asteroids.Components
+namespace Core.Collisions
 {
-	internal class CircleCollider : Disposable, ICollider
+	public class CircleCollider : Disposable, ICollider
 	{
 		private readonly float radius;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using Core;
+using Core.Collisions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

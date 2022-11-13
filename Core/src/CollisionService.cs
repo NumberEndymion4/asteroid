@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using Core;
+using Core.Collisions;
 using Core.Utils;
 using Microsoft.Xna.Framework;
 
-namespace Asteroids
+namespace Core
 {
-	internal class CollisionService
+	public class CollisionService
 	{
 		private readonly Dictionary<ICollider, HashSet<ICollider>> collisions;
 		private readonly HashSet<ICollider> entries;
@@ -42,7 +42,7 @@ namespace Asteroids
 			return colliders != null;
 		}
 
-		public void Update(GameTime gameTime)
+		public void Update()
 		{
 			bucket.AddRange(entries);
 

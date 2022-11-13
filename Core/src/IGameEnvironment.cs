@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Core.Collisions;
+using Microsoft.Xna.Framework;
 
 namespace Core
 {

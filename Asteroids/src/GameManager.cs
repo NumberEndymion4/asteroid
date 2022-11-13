@@ -65,7 +65,7 @@ namespace Asteroids
 				gameObject.Update(gameTime);
 			}
 
-			CollisionService.Instance.Update(gameTime);
+			CollisionService.Instance.Update();
 			BroadcastService.Instance.Update(gameTime);
 
 			for (int i = gameObjects.Count - 1; i >= 0; --i) {
