@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class DieOutsideScreen : IComponent
+	internal class SuicideOutsideScreen : IComponent
 	{
 		public void Update(IGameObject gameObject, GameTime gameTime)
 		{

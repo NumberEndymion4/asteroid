@@ -59,7 +59,7 @@ namespace Asteroids
 			spaceship.AddComponent(positionProvider);
 			spaceship.AddComponent(angleProvider);
 			spaceship.AddComponent(spaceshipCollider);
-			spaceship.AddComponent(new TakeDamageOnCollision(Config.Instance.AsteroidGroup));
+			spaceship.AddComponent(new SuicideOnCollision(Config.Instance.AsteroidGroup));
 			spaceship.AddComponent(fireBullet);
 			spaceship.AddComponent(fireLaser);
 
@@ -107,17 +107,14 @@ namespace Asteroids
 				Config.Instance.AsteroidMinSpeed, Config.Instance.AsteroidMaxSpeed
 			);
 
-			var damageAcceptor = new TakeDamageOnCollision(
-				Config.Instance.BulletGroup, Config.Instance.LaserGroup
-			);
-
 			asteroid.AddComponent(new LinearMovement(direction, asteroidSpeed));
 			asteroid.AddComponent(new LinearRotation(radianPerSecond));
-			asteroid.AddComponent(new DieOutsideScreen());
+			asteroid.AddComponent(new SuicideOutsideScreen());
 			asteroid.AddComponent(new PositionProvider());
 			asteroid.AddComponent(asteroidCollider);
 			asteroid.AddComponent(new DamageProvider(1));
-			asteroid.AddComponent(damageAcceptor);
+			asteroid.AddComponent(new TakeDamageOnCollision(Config.Instance.BulletGroup));
+			asteroid.AddComponent(new SuicideOnCollision(Config.Instance.LaserGroup));
 			asteroid.AddComponent(new HealthProvider(1));
 			asteroid.AddComponent(new SpawnAsteroidOnHealth(0, settings.PartsCount));
 
@@ -150,8 +147,8 @@ namespace Asteroids
 			bullet.AddComponent(new HealthProvider(1));
 			bullet.AddComponent(new LinearMovement(direction, 800f));
 			bullet.AddComponent(new DamageProvider(1));
-			bullet.AddComponent(new TakeDamageOnCollision(Config.Instance.AsteroidGroup));
-			bullet.AddComponent(new DieOutsideScreen());
+			bullet.AddComponent(new SuicideOnCollision(Config.Instance.AsteroidGroup));
+			bullet.AddComponent(new SuicideOutsideScreen());
 
 			gameObjectBucket.Clear();
 			gameObjectBucket.Add(bullet);

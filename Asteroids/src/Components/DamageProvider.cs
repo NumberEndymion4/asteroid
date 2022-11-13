@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class DamageProvider : IComponent, IDataProvider<int>
+	internal class DamageProvider : IDataProvider<int>
 	{
 		public int Damage { get; }
 
