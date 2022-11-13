@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core;
 using Microsoft.Xna.Framework;
 
@@ -39,15 +40,18 @@ namespace Asteroids
 		public bool TryGetComponent<TComponent>(out TComponent component)
 			where TComponent : IComponent
 		{
-			foreach (var item in components) {
-				if (item is TComponent found) {
-					component = found;
-					return true;
-				}
+			foreach (var found in EnumerateComponents<TComponent>()) {
+				component = found;
+				return true;
 			}
-
 			component = default;
 			return false;
+		}
+
+		public IEnumerable<TComponent> EnumerateComponents<TComponent>()
+			where TComponent : IComponent
+		{
+			return components.OfType<TComponent>();
 		}
 
 		public virtual bool Equals(IGameObject other)

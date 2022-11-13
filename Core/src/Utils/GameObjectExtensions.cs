@@ -1,16 +1,20 @@
-﻿namespace Core.Utils
+﻿using System.Linq;
+
+namespace Core.Utils
 {
 	public static class GameObjectExtensions
 	{
 		public static bool IsDead(this IGameObject gameObject)
 		{
-			var lifeCycleProvider = gameObject.GetComponent<IDataProvider<LifeCycleState>>();
-			return lifeCycleProvider?.Data == LifeCycleState.Dead;
+			return
+				gameObject.TryGetComponent(out IDataProvider<LifeCycleState> lifeCycleProvider) &&
+				lifeCycleProvider.Data == LifeCycleState.Dead;
 		}
 
 		public static bool IsComplete(this IGameObject gameObject)
 		{
-			return gameObject.GetComponent<ICompletable>()?.IsComplete == true;
+			return gameObject.EnumerateComponents<ICompletable>()
+				.All(completable => completable.IsComplete);
 		}
 	}
 }

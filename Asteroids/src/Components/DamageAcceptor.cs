@@ -20,22 +20,25 @@ namespace Asteroids.Components
 
 		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
-			if (
-				!gameObject.TryGetComponent(out ICollider ownCollider) ||
-				!gameObject.TryGetComponent(out HealthProvider healthProvider) ||
-				!CollisionService.Instance.TryGetCollision(ownCollider, out var colliders)
-			) {
+			if (!gameObject.TryGetComponent(out HealthProvider healthProvider)) {
 				return;
 			}
 
-			foreach (var collider in colliders) {
-				if (
-					sensitiveTo.Contains(collider.Group) &&
-					collider.Owner.TryGetComponent(out DamageProvider provider) &&
-					damagedBy.Add(provider)
-				) {
-					healthProvider.Hit(provider.Damage);
-					Triggered?.Invoke();
+			foreach (var ownCollider in gameObject.EnumerateComponents<ICollider>()) {
+				if (!CollisionService.Instance.TryGetCollision(ownCollider, out var colliders)) {
+					continue;
+				}
+
+				foreach (var collider in colliders) {
+					if (
+						sensitiveTo.Contains(collider.Group) &&
+						collider.Owner.TryGetComponent(out DamageProvider provider) &&
+						damagedBy.Add(provider)
+					) {
+						healthProvider.Hit(provider.Damage);
+						Triggered?.Invoke();
+						break;
+					}
 				}
 			}
 		}

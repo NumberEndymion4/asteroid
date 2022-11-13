@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace Core
@@ -14,5 +15,6 @@ namespace Core
 		void AddComponent(IComponent component);
 		TComponent GetComponent<TComponent>() where TComponent : IComponent;
 		bool TryGetComponent<TComponent>(out TComponent component) where TComponent : IComponent;
+		IEnumerable<TComponent> EnumerateComponents<TComponent>() where TComponent : IComponent;
 	}
 }

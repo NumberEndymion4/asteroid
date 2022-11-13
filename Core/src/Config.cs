@@ -21,7 +21,7 @@ namespace Core
 
 		public readonly Color BackgroundColor = new Color(64, 64, 64);
 
-		public readonly int AsteroidCount = 0;
+		public readonly int AsteroidCount = 10;
 		public readonly int AsteroidGroup = 1;
 		public readonly float AsteroidRadius = 65 / 2f;
 		public readonly float AsteroidMinSpeed = 25f;

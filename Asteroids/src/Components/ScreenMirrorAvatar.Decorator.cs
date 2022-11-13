@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Core;
 using Microsoft.Xna.Framework;
 
@@ -46,6 +47,11 @@ namespace Asteroids.Components
 		bool IGameObject.TryGetComponent<TComponent>(out TComponent component)
 		{
 			return underlying.TryGetComponent(out component);
+		}
+
+		IEnumerable<TComponent> IGameObject.EnumerateComponents<TComponent>()
+		{
+			return underlying.EnumerateComponents<TComponent>();
 		}
 
 		void IDisposable.Dispose()
