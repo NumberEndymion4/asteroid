@@ -69,6 +69,9 @@ namespace Asteroids
 				gameObject.Update(gameTime);
 			}
 
+			CollisionService.Instance.Update(gameTime);
+			BroadcastService.Instance.Notify(gameTime);
+
 			for (int i = gameObjects.Count - 1; i >= 0; --i) {
 				var gameObject = gameObjects[i];
 
@@ -77,8 +80,6 @@ namespace Asteroids
 					gameObjects.RemoveAt(i);
 				}
 			}
-
-			CollisionService.Instance.Update(gameTime);
 
 			for (int i = presenters.Count - 1; i >= 0; --i) {
 				if (presenters[i].IsTargetLost) {

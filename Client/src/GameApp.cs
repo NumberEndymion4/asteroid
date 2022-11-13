@@ -1,4 +1,5 @@
 ﻿using Asteroids;
+using Client.Broadcast;
 using Client.Components;
 using Client.Presenters;
 using Core;
@@ -10,6 +11,7 @@ namespace Client
 {
 	internal partial class GameApp : Game, IGameEnvironment, IKeyStateProvider
 	{
+		private KeyboardBroadcast keyboardBroadcast;
 		private GameManager gameManager;
 		private SpriteBatch spriteBatch;
 		private Texture2D spaceshipTexture;
@@ -30,6 +32,13 @@ namespace Client
 
 		protected override void Initialize()
 		{
+			keyboardBroadcast = new KeyboardBroadcast();
+			keyboardBroadcast.RegisterTags(Keys.W, "start_accelerate", "stop_accelerate");
+			keyboardBroadcast.RegisterTags(Keys.A, "start_rotate_CCW", "stop_rotate_CCW");
+			keyboardBroadcast.RegisterTags(Keys.D, "start_rotate_CW", "stop_rotate_CW");
+			keyboardBroadcast.RegisterTags(Keys.Space, "start_shoot1", "stop_shoot1");
+			keyboardBroadcast.RegisterTags(Keys.Q, "start_shoot2", "stop_shoot2");
+
 			gameManager = new GameManager(this);
 			base.Initialize();
 		}
@@ -48,14 +57,13 @@ namespace Client
 
 		protected override void Update(GameTime gameTime)
 		{
-			gameManager.EnsureScene();
-
 			if (Keyboard.GetState().IsKeyDown(Keys.Escape)) {
 				Exit();
 			} else {
+				keyboardBroadcast.Update(gameTime);
+				gameManager.EnsureScene();
 				gameManager.Update(gameTime);
 			}
-
 			base.Update(gameTime);
 		}
 
