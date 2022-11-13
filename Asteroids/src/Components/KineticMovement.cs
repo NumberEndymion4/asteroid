@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids.Components
 {
-	internal class KineticMovement : Disposable, IComponent, IBroadcastListener
+	internal class KineticMovement : Disposable, IDataProvider<float>, IBroadcastListener
 	{
 		public struct Settings
 		{
@@ -18,6 +18,8 @@ namespace Asteroids.Components
 
 		private float desiredSpeed;
 		private float speed;
+
+		float IDataProvider<float>.Data => speed;
 
 		public KineticMovement(Settings speedSettings)
 		{

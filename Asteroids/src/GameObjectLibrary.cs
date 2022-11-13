@@ -38,11 +38,13 @@ namespace Asteroids
 				spaceship, Config.Instance.SpaceshipGroup, Config.Instance.SpaceshipRadius
 			);
 
-			var speedOptions = new KineticMovement.Settings {
-				MaxSpeed = 400,
-				Acceleration = 300,
-				Deceleration = 200,
-			};
+			var movement = new KineticMovement(
+				new KineticMovement.Settings {
+					MaxSpeed = 400,
+					Acceleration = 300,
+					Deceleration = 200,
+				}
+			);
 
 			var fireBullet = new IntervalBroadcastListener(
 				"spawn_bullet",
@@ -61,7 +63,7 @@ namespace Asteroids
 			);
 
 			spaceship.AddComponent(new InputRotation(MathF.PI));
-			spaceship.AddComponent(new KineticMovement(speedOptions));
+			spaceship.AddComponent(movement);
 			spaceship.AddComponent(new HealthProvider(1));
 			spaceship.AddComponent(new WrapPositionOutsideScreen());
 			spaceship.AddComponent(positionProvider);
@@ -84,6 +86,7 @@ namespace Asteroids
 			presenterBucket.Add(environment.GetCircleColliderPresenter(spaceshipCollider));
 			presenterBucket.Add(environment.GetSpaceshipAngleToHudPresenter(angleProvider));
 			presenterBucket.Add(environment.GetSpaceshipPositionToHudPresenter(positionProvider));
+			presenterBucket.Add(environment.GetSpaceshipSpeedToHudPresenter(movement));
 			presenterBucket.Add(environment.GetLaserCooldownToHudPresenter(fireLaser));
 			presenters = presenterBucket;
 		}

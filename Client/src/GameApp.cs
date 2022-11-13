@@ -188,11 +188,24 @@ namespace Client
 			static string AngleToString(float angle) => $"Angle: {angle:F0}";
 		}
 
+		IPresenter IGameEnvironment.GetSpaceshipSpeedToHudPresenter(
+			IDataProvider<float> speedProvider
+		) {
+			const int Offset = 10;
+			const int PositionY = 48;
+
+			return new TextPresenter<float>(
+				font, new Vector2(Offset, Offset + PositionY), speedProvider, SpeedToString
+			);
+
+			static string SpeedToString(float speed) => $"Speed: {speed:F0}";
+		}
+
 		IPresenter IGameEnvironment.GetLaserCooldownToHudPresenter(
 			IDataProvider<TimeSpan> cooldownProvider
 		) {
 			const int Offset = 10;
-			const int PositionY = 48;
+			const int PositionY = 72;
 
 			return new TextPresenter<TimeSpan>(
 				font, new Vector2(Offset, Offset + PositionY), cooldownProvider, CooldownToString

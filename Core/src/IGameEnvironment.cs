@@ -14,6 +14,7 @@ namespace Core
 
 		IPresenter GetSpaceshipPositionToHudPresenter(IDataProvider<Vector2> positionProvider);
 		IPresenter GetSpaceshipAngleToHudPresenter(IDataProvider<float> angleProvider);
+		IPresenter GetSpaceshipSpeedToHudPresenter(IDataProvider<float> speedProvider);
 		IPresenter GetLaserCooldownToHudPresenter(IDataProvider<TimeSpan> cooldownProvider);
 	}
 }
