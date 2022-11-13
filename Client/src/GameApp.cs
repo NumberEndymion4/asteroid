@@ -17,6 +17,7 @@ namespace Client
 		private Texture2D spaceshipTexture;
 		private Texture2D asteroidTexture;
 		private Texture2D bulletTexture;
+		private Texture2D laserTexture;
 		private SpriteFont font;
 
 		public GameApp()
@@ -49,6 +50,7 @@ namespace Client
 			spaceshipTexture = Content.Load<Texture2D>("spaceship");
 			asteroidTexture = Content.Load<Texture2D>("asteroid");
 			bulletTexture = Content.Load<Texture2D>("bullet");
+			laserTexture = Content.Load<Texture2D>("laser");
 			font = Content.Load<SpriteFont>("font");
 
 			LoadPartial();
@@ -80,19 +82,19 @@ namespace Client
 
 		IPresenter IGameEnvironment.GetSpaceshipPresenter(IGameObject spaceship)
 		{
-			var region = new Rectangle(Point.Zero, new Point(100));
+			var bounds = new Rectangle(Point.Zero, new Point(100));
 			var aliveAnimation = new SpriteAnimation(spaceshipTexture);
-			aliveAnimation.AppendRegion(region);
+			aliveAnimation.AppendRegion(bounds);
 
-			var deadAimation = new SpriteAnimation(spaceshipTexture);
+			var deadAnimation = new SpriteAnimation(spaceshipTexture);
 			for (int i = 0; i < 8; ++i) {
-				deadAimation.AppendRegion(region);
-				region.Offset(100, 0);
+				deadAnimation.AppendRegion(bounds);
+				bounds.Offset(100, 0);
 			}
 
 			var animationProvider = new AnimationProvider();
 			animationProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
-			animationProvider.AddSpriteAnimation(LifeCycleState.Dead.ToString(), deadAimation);
+			animationProvider.AddSpriteAnimation(LifeCycleState.Dead.ToString(), deadAnimation);
 			spaceship.AddComponent(animationProvider);
 
 			return new GameObjectPresenter(spaceship, animationProvider);
@@ -120,6 +122,25 @@ namespace Client
 			bullet.AddComponent(animationProvider);
 
 			return new GameObjectPresenter(bullet, animationProvider);
+		}
+
+		IPresenter IGameEnvironment.GetLaserPresenter(IGameObject laser)
+		{
+			var bounds = new Rectangle(Point.Zero, new Point(100, 10));
+			var origin = new Vector2(0, 0.5f);
+			var scale = new Vector2(100, 1f);
+			var deadAnimation = new SpriteAnimation(laserTexture);
+
+			for (int i = 0; i < 6; ++i) {
+				deadAnimation.AppendRegion(bounds, origin, scale);
+				bounds.Offset(0, 10);
+			}
+
+			var animationProvider = new AnimationProvider();
+			animationProvider.AddSpriteAnimation(LifeCycleState.Dead.ToString(), deadAnimation);
+			laser.AddComponent(animationProvider);
+
+			return new GameObjectPresenter(laser, animationProvider);
 		}
 
 		IPresenter IGameEnvironment.GetBoundsPresenter(ICollider collider)

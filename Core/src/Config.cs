@@ -49,7 +49,10 @@ namespace Core
 		public readonly float SpaceshipRadius = 55 / 2f;
 
 		public readonly int BulletGroup = 2;
+		public readonly TimeSpan BulletFireRate = TimeSpan.FromSeconds(0.5);
+
 		public readonly int LaserGroup = 3;
+		public readonly TimeSpan LaserFireRate = TimeSpan.FromSeconds(0.5);
 
 		public Rectangle ScreenRect { get; }
 

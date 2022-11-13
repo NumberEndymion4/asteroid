@@ -11,10 +11,13 @@ namespace Client.Components
 
 		private SpriteAnimation playAnimation;
 		private string playAnimationName;
-		private Rectangle playRegion;
+		private SpriteAnimation.Region playRegion;
 
 		public Texture2D Texture => playAnimation?.Texture;
-		public Rectangle Region => playRegion;
+		public Rectangle Bounds => playRegion?.Bounds ?? Rectangle.Empty;
+		public Vector2 Origin => playRegion?.Origin ?? new Vector2(0.5f);
+		public Vector2 Scale => playRegion?.Scale ?? Vector2.One;
+
 		public bool IsReady => playAnimation != null;
 		public bool IsComplete => playAnimation?.IsPlaying != true;
 

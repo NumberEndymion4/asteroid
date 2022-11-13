@@ -6,7 +6,9 @@ namespace Client
 	internal interface IRenderRegion
 	{
 		Texture2D Texture { get; }
-		Rectangle Region { get; }
+		Rectangle Bounds { get; }
+		Vector2 Origin { get; }
+		Vector2 Scale { get; }
 		bool IsReady { get; }
 	}
 }

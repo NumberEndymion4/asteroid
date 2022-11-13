@@ -31,11 +31,11 @@ namespace Client.Presenters
 			spriteBatch.Draw(
 				regionProvider.Texture,
 				gameObject.Position,
-				regionProvider.Region,
+				regionProvider.Bounds,
 				Color.White,
 				gameObject.Rotation,
-				regionProvider.Region.Size.ToVector2() / 2f,
-				gameObject.Scale,
+				regionProvider.Bounds.Size.ToVector2() * regionProvider.Origin,
+				regionProvider.Scale * gameObject.Scale,
 				SpriteEffects.None,
 				0f
 			);

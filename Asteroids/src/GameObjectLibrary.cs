@@ -43,8 +43,12 @@ namespace Asteroids
 				Deceleration = 200,
 			};
 
-			var spawner = new IntervalBroadcastListener(
-				"spawn_bullet", "start_shoot1", "stop_shoot1", TimeSpan.FromSeconds(0.5)
+			var fireBullet = new IntervalBroadcastListener(
+				"spawn_bullet", "start_shoot1", "stop_shoot1", Config.Instance.BulletFireRate
+			);
+
+			var fireLaser = new IntervalBroadcastListener(
+				"spawn_laser", "start_shoot2", "stop_shoot2", Config.Instance.LaserFireRate
 			);
 
 			spaceship.AddComponent(new InputRotation(MathF.PI));
@@ -55,16 +59,17 @@ namespace Asteroids
 			spaceship.AddComponent(angleProvider);
 			spaceship.AddComponent(spaceshipCollider);
 			spaceship.AddComponent(new TakeDamageOnCollision(Config.Instance.AsteroidGroup));
-			spaceship.AddComponent(spawner);
+			spaceship.AddComponent(fireBullet);
+			spaceship.AddComponent(fireLaser);
 
 			gameObjectBucket.Clear();
 			gameObjectBucket.Add(spaceship);
 			gameObjects = gameObjectBucket;
 
 			presenterBucket.Clear();
-			CreateAvatar(environment, spaceship, Orientation.Horizontal, presenterBucket);
-			CreateAvatar(environment, spaceship, Orientation.Vertical, presenterBucket);
-			CreateAvatar(environment, spaceship, Orientation.All, presenterBucket);
+			CreateSpaceshipAvatar(environment, spaceship, Orientation.Horizontal, presenterBucket);
+			CreateSpaceshipAvatar(environment, spaceship, Orientation.Vertical, presenterBucket);
+			CreateSpaceshipAvatar(environment, spaceship, Orientation.All, presenterBucket);
 
 			presenterBucket.Add(environment.GetSpaceshipPresenter(spaceship));
 			presenterBucket.Add(environment.GetBoundsPresenter(spaceshipCollider));
@@ -157,7 +162,32 @@ namespace Asteroids
 			presenters = presenterBucket;
 		}
 
-		private static IGameObject CreateAvatar(
+		public void CreateLaser(
+			IGameEnvironment environment,
+			Vector2 position,
+			float rotation,
+			out IReadOnlyCollection<IGameObject> gameObjects,
+			out IReadOnlyCollection<IPresenter> presenters
+		) {
+			var laser = new GameObject {
+				Position = position,
+				Rotation = rotation,
+			};
+
+			laser.AddComponent(new HealthProvider(1));
+			laser.AddComponent(new SuicideOnTime(TimeSpan.Zero));
+			laser.AddComponent(new DamageProvider(1));
+
+			gameObjectBucket.Clear();
+			gameObjectBucket.Add(laser);
+			gameObjects = gameObjectBucket;
+
+			presenterBucket.Clear();
+			presenterBucket.Add(environment.GetLaserPresenter(laser));
+			presenters = presenterBucket;
+		}
+
+		private static IGameObject CreateSpaceshipAvatar(
 			IGameEnvironment environment,
 			IGameObject source,
 			Orientation orientation,

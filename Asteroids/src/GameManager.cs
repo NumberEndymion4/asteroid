@@ -113,6 +113,16 @@ namespace Asteroids
 				);
 				pendingObjects.AddRange(bulletObjects);
 				pendingPresenters.AddRange(bulletPresenters);
+			} else if (message is GameObjectMessage { Tag: "spawn_laser" } spawnLaser) {
+				GameObjectFactory.Instance.CreateLaser(
+					environment,
+					spawnLaser.Sender.GetComponent<PositionProvider>()?.Position ?? Vector2.Zero,
+					spawnLaser.Sender.GetComponent<AngleProvider>()?.Radians ?? 0f,
+					out var laserObjects,
+					out var laserPresenters
+				);
+				pendingObjects.AddRange(laserObjects);
+				pendingPresenters.AddRange(laserPresenters);
 			} else if (message is GameObjectMessage { Tag: "spawn_asteroid" } spawnAsteroid) {
 				GameObjectFactory.Instance.CreateAsteroid(
 					environment,

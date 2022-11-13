@@ -7,9 +7,23 @@ namespace Client
 {
 	internal class SpriteAnimation
 	{
+		public class Region
+		{
+			public readonly Rectangle Bounds;
+			public readonly Vector2 Origin;
+			public readonly Vector2 Scale;
+
+			public Region(Rectangle bounds, Vector2 origin, Vector2 scale)
+			{
+				Bounds = bounds;
+				Origin = origin;
+				Scale = scale;
+			}
+		}
+
 		private static readonly TimeSpan FrameDuration = TimeSpan.FromSeconds(1d / 30);
 
-		private readonly List<Rectangle> regions;
+		private readonly List<Region> regions;
 
 		private TimeSpan startTime;
 
@@ -18,18 +32,18 @@ namespace Client
 
 		public SpriteAnimation(Texture2D texture)
 		{
-			regions = new List<Rectangle>();
+			regions = new List<Region>();
 			Texture = texture;
 		}
 
-		public void AppendRegion(Rectangle region)
+		public void AppendRegion(Rectangle bound)
 		{
-			regions.Add(region);
+			AppendRegion(bound, new Vector2(0.5f), Vector2.One);
 		}
 
-		public void AppendRegions(params Rectangle[] regionList)
+		public void AppendRegion(Rectangle bound, Vector2 origin, Vector2 scale)
 		{
-			regions.AddRange(regionList);
+			regions.Add(new Region(bound, origin, scale));
 		}
 
 		public void Start(GameTime gameTime)
@@ -38,11 +52,11 @@ namespace Client
 			IsPlaying = true;
 		}
 
-		public void Continue(GameTime gameTime, out Rectangle region)
+		public void Continue(GameTime gameTime, out Region region)
 		{
 			int lastFrame = regions.Count - 1;
 			if (lastFrame < 0) {
-				region = Rectangle.Empty;
+				region = null;
 				IsPlaying = false;
 				return;
 			}
