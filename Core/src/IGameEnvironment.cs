@@ -8,6 +8,7 @@ namespace Core
 	{
 		IPresenter GetSpaceshipPresenter(IGameObject spaceship);
 		IPresenter GetAsteroidPresenter(IGameObject asteroid);
+		IPresenter GetUfoPresenter(IGameObject ufo);
 		IPresenter GetBulletPresenter(IGameObject bullet);
 		IPresenter GetLaserPresenter(IGameObject laser);
 		IPresenter GetCircleColliderPresenter(CircleCollider collider);

@@ -69,7 +69,9 @@ namespace Asteroids
 			spaceship.AddComponent(positionProvider);
 			spaceship.AddComponent(angleProvider);
 			spaceship.AddComponent(spaceshipCollider);
-			spaceship.AddComponent(new SuicideOnCollision(Config.Instance.AsteroidGroup));
+			spaceship.AddComponent(new SuicideOnCollision(
+				Config.Instance.AsteroidGroup, Config.Instance.UfoGroup
+			));
 			spaceship.AddComponent(fireBullet);
 			spaceship.AddComponent(fireLaser);
 
@@ -88,6 +90,49 @@ namespace Asteroids
 			presenterBucket.Add(environment.GetSpaceshipPositionToHudPresenter(positionProvider));
 			presenterBucket.Add(environment.GetSpaceshipSpeedToHudPresenter(movement));
 			presenterBucket.Add(environment.GetLaserCooldownToHudPresenter(fireLaser));
+			presenters = presenterBucket;
+		}
+
+		public void CreateUfo(
+			IGameEnvironment environment,
+			Vector2 position,
+			UfoSettings settings,
+			out IReadOnlyCollection<IGameObject> gameObjects,
+			out IReadOnlyCollection<IPresenter> presenters
+		) {
+			var ufo = new GameObject {
+				Position = position,
+			};
+
+			var direction = Vector2.Transform(
+				Vector2.UnitX, Matrix.CreateRotationZ(random.NextSingle() * MathF.Tau)
+			);
+
+			var ufoCollider = new CircleCollider(
+				ufo, Config.Instance.UfoGroup, Config.Instance.UfoRadius
+			);
+
+			float ufoSpeed = random.NextSingle(
+				Config.Instance.UfoMinSpeed, Config.Instance.UfoMaxSpeed
+			);
+
+			ufo.AddComponent(new LinearMovement(direction, ufoSpeed));
+			ufo.AddComponent(new SuicideOutsideScreen());
+			ufo.AddComponent(ufoCollider);
+			ufo.AddComponent(new DamageProvider(1));
+			ufo.AddComponent(new SuicideOnCollision(
+				Config.Instance.BulletGroup, Config.Instance.LaserGroup
+			));
+			ufo.AddComponent(new HealthProvider(1));
+			ufo.AddComponent(new ScoreProvider(settings.Score));
+
+			gameObjectBucket.Clear();
+			gameObjectBucket.Add(ufo);
+			gameObjects = gameObjectBucket;
+
+			presenterBucket.Clear();
+			presenterBucket.Add(environment.GetUfoPresenter(ufo));
+			presenterBucket.Add(environment.GetCircleColliderPresenter(ufoCollider));
 			presenters = presenterBucket;
 		}
 
@@ -160,7 +205,9 @@ namespace Asteroids
 			bullet.AddComponent(new HealthProvider(1));
 			bullet.AddComponent(new LinearMovement(direction, 800f));
 			bullet.AddComponent(new DamageProvider(1));
-			bullet.AddComponent(new SuicideOnCollision(Config.Instance.AsteroidGroup));
+			bullet.AddComponent(new SuicideOnCollision(
+				Config.Instance.AsteroidGroup, Config.Instance.UfoGroup
+			));
 			bullet.AddComponent(new SuicideOutsideScreen());
 
 			gameObjectBucket.Clear();

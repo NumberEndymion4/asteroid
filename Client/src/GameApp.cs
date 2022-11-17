@@ -18,6 +18,7 @@ namespace Client
 		private SpriteBatch spriteBatch;
 		private Texture2D spaceshipTexture;
 		private Texture2D asteroidTexture;
+		private Texture2D ufoTexture;
 		private Texture2D bulletTexture;
 		private Texture2D laserTexture;
 		private SpriteFont font;
@@ -51,6 +52,7 @@ namespace Client
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 			spaceshipTexture = Content.Load<Texture2D>("spaceship");
 			asteroidTexture = Content.Load<Texture2D>("asteroid");
+			ufoTexture = Content.Load<Texture2D>("ufo");
 			bulletTexture = Content.Load<Texture2D>("bullet");
 			laserTexture = Content.Load<Texture2D>("laser");
 			font = Content.Load<SpriteFont>("font");
@@ -116,6 +118,20 @@ namespace Client
 			asteroid.AddComponent(animationProvider);
 
 			return new GameObjectPresenter(asteroid, animationProvider);
+		}
+
+		IPresenter IGameEnvironment.GetUfoPresenter(IGameObject ufo)
+		{
+			const int Radius = 100;
+
+			var aliveAnimation = new SpriteAnimation(ufoTexture);
+			aliveAnimation.AppendRegion(new Rectangle(Point.Zero, new Point(Radius)));
+
+			var animationProvider = new AnimationProvider();
+			animationProvider.AddSpriteAnimation(LifeCycleState.Alive.ToString(), aliveAnimation);
+			ufo.AddComponent(animationProvider);
+
+			return new GameObjectPresenter(ufo, animationProvider);
 		}
 
 		IPresenter IGameEnvironment.GetBulletPresenter(IGameObject bullet)

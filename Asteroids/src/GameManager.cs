@@ -53,6 +53,18 @@ namespace Asteroids
 				presenters.AddRange(newPresenters);
 			}
 
+			for (int i = 0; i < Config.Instance.UfoCount; ++i) {
+				GameObjectFactory.Instance.CreateUfo(
+					environment,
+					Config.Instance.ScreenRect.Center.ToVector2(),
+					Config.Instance.RegularUfoSettings,
+					out newObjects,
+					out newPresenters
+				);
+				gameObjects.AddRange(newObjects);
+				presenters.AddRange(newPresenters);
+			}
+
 			GameObjectFactory.Instance.CreateSpaceship(
 				environment, out newObjects, out newPresenters
 			);

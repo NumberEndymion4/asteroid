@@ -15,6 +15,11 @@ namespace Core
 		public float AngleVelocityMax;
 	}
 
+	public class UfoSettings
+	{
+		public int Score;
+	}
+
 	public class Config
 	{
 		public static Config Instance { get; } = new Config();
@@ -56,6 +61,16 @@ namespace Core
 
 		public readonly int LaserGroup = 3;
 		public readonly TimeSpan LaserFireRate = TimeSpan.FromSeconds(5);
+
+		public readonly int UfoCount = 2;
+		public readonly int UfoGroup = 4;
+		public readonly float UfoRadius = 55 / 2f;
+		public readonly float UfoMinSpeed = 30f;
+		public readonly float UfoMaxSpeed = 30f;
+
+		public readonly UfoSettings RegularUfoSettings = new UfoSettings {
+			Score = 220,
+		};
 
 		public Rectangle ScreenRect { get; }
 
