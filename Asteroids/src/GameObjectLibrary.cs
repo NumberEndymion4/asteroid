@@ -129,6 +129,7 @@ namespace Asteroids
 			asteroid.AddComponent(new SuicideOnCollision(Config.Instance.LaserGroup));
 			asteroid.AddComponent(new HealthProvider(1));
 			asteroid.AddComponent(new SpawnAsteroidOnHealth(0, settings.PartsCount));
+			asteroid.AddComponent(new ScoreProvider(settings.Score));
 
 			gameObjectBucket.Clear();
 			gameObjectBucket.Add(asteroid);

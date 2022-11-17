@@ -163,12 +163,25 @@ namespace Client
 			return presenter;
 		}
 
+		IPresenter IGameEnvironment.GetScoresToHudPresenter(IDataProvider<int> scoresProvider)
+		{
+			const int Offset = 10;
+
+			return new TextPresenter<int>(
+				font, new Vector2(Offset), scoresProvider, ScoresToString
+			);
+
+			static string ScoresToString(int scores) => $"Scores: {scores}";
+		}
+
 		IPresenter IGameEnvironment.GetSpaceshipPositionToHudPresenter(
 			IDataProvider<Vector2> positionProvider
 		) {
 			const int Offset = 10;
+			const int PositionY = 24;
+
 			return new TextPresenter<Vector2>(
-				font, new Vector2(Offset), positionProvider, PositionToString
+				font, new Vector2(Offset, Offset + PositionY), positionProvider, PositionToString
 			);
 
 			static string PositionToString(Vector2 position) =>
@@ -179,7 +192,7 @@ namespace Client
 			IDataProvider<float> angleProvider
 		) {
 			const int Offset = 10;
-			const int PositionY = 24;
+			const int PositionY = 48;
 
 			return new TextPresenter<float>(
 				font, new Vector2(Offset, Offset + PositionY), angleProvider, AngleToString
@@ -192,7 +205,7 @@ namespace Client
 			IDataProvider<float> speedProvider
 		) {
 			const int Offset = 10;
-			const int PositionY = 48;
+			const int PositionY = 72;
 
 			return new TextPresenter<float>(
 				font, new Vector2(Offset, Offset + PositionY), speedProvider, SpeedToString
@@ -205,7 +218,7 @@ namespace Client
 			IDataProvider<TimeSpan> cooldownProvider
 		) {
 			const int Offset = 10;
-			const int PositionY = 72;
+			const int PositionY = 96;
 
 			return new TextPresenter<TimeSpan>(
 				font, new Vector2(Offset, Offset + PositionY), cooldownProvider, CooldownToString

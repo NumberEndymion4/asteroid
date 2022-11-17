@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Asteroids.Broadcast;
 using Core;
 using Microsoft.Xna.Framework;
 
@@ -25,13 +26,15 @@ namespace Asteroids.Components
 				}
 
 				foreach (var collider in colliders) {
-					if (
-						sensitiveTo.Contains(collider.Group) &&
-						collider.Owner.TryGetComponent(out DamageProvider provider)
-					) {
-						healthProvider.Suicide();
-						return;
+					if (!sensitiveTo.Contains(collider.Group)) {
+						continue;
 					}
+
+					healthProvider.Suicide();
+					if (gameObject.TryGetComponent(out ScoreProvider scoreProvider)) {
+						BroadcastService.Instance.Schedule(new ScoreMessage(scoreProvider.Score));
+					}
+					return;
 				}
 			}
 		}

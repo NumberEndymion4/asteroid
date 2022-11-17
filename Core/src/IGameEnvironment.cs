@@ -12,6 +12,7 @@ namespace Core
 		IPresenter GetLaserPresenter(IGameObject laser);
 		IPresenter GetCircleColliderPresenter(CircleCollider collider);
 
+		IPresenter GetScoresToHudPresenter(IDataProvider<int> scoresProvider);
 		IPresenter GetSpaceshipPositionToHudPresenter(IDataProvider<Vector2> positionProvider);
 		IPresenter GetSpaceshipAngleToHudPresenter(IDataProvider<float> angleProvider);
 		IPresenter GetSpaceshipSpeedToHudPresenter(IDataProvider<float> speedProvider);

@@ -6,6 +6,7 @@ namespace Core
 	public class AsteroidSettings
 	{
 		public int PartsCount;
+		public int Score;
 
 		public float ScaleMin;
 		public float ScaleMax;
@@ -32,6 +33,7 @@ namespace Core
 
 		public readonly AsteroidSettings BigAsteroid = new AsteroidSettings {
 			PartsCount = 4,
+			Score = 100,
 			ScaleMin = 0.6f,
 			ScaleMax = 1f,
 			AngleVelocityMin = MathF.PI / 24,
@@ -39,6 +41,7 @@ namespace Core
 		};
 
 		public readonly AsteroidSettings SmallAsteroid = new AsteroidSettings {
+			Score = 50,
 			ScaleMin = 0.2f,
 			ScaleMax = 0.4f,
 			AngleVelocityMin = MathF.PI / 16,

@@ -8,15 +8,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Asteroids
 {
-	public class GameManager : Disposable, IBroadcastListener
+	public partial class GameManager : Disposable, IBroadcastListener
 	{
 		private readonly IGameEnvironment environment;
 		private readonly List<IGameObject> gameObjects;
 		private readonly List<IGameObject> pendingObjects;
 		private readonly List<IPresenter> presenters;
 		private readonly List<IPresenter> pendingPresenters;
+		private readonly ScoresProvider scoresProvider;
 
 		private bool isSceneReady;
+		private int totalScores;
 
 		public GameManager(IGameEnvironment gameEnvironment)
 		{
@@ -25,6 +27,7 @@ namespace Asteroids
 			pendingObjects = new List<IGameObject>();
 			presenters = new List<IPresenter>();
 			pendingPresenters = new List<IPresenter>();
+			scoresProvider = new ScoresProvider(this);
 
 			BroadcastService.Instance.Register(this);
 		}
@@ -56,6 +59,7 @@ namespace Asteroids
 			gameObjects.AddRange(newObjects);
 			presenters.AddRange(newPresenters);
 
+			presenters.Add(environment.GetScoresToHudPresenter(scoresProvider));
 			isSceneReady = true;
 		}
 
@@ -133,6 +137,8 @@ namespace Asteroids
 				);
 				pendingObjects.AddRange(asteroidObjects);
 				pendingPresenters.AddRange(asteroidPresenters);
+			} else if (message is ScoreMessage { Tag: "scores" } addScore) {
+				totalScores += addScore.Scores;
 			}
 		}
 	}

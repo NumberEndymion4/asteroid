@@ -11,7 +11,7 @@ namespace Asteroids.Components
 		private bool wasSuicide;
 		private int acceptedDamage;
 
-		public int Health { get; private set; }
+		public int Health => Math.Max(0, healthPoints - acceptedDamage);
 
 		LifeCycleState IDataProvider<LifeCycleState>.Data =>
 			(!wasSuicide && Health > 0) ? LifeCycleState.Alive : LifeCycleState.Dead;
@@ -19,7 +19,6 @@ namespace Asteroids.Components
 		public HealthProvider(int health)
 		{
 			healthPoints = health;
-			Health = health;
 		}
 
 		public void Hit(int damage)
@@ -36,7 +35,6 @@ namespace Asteroids.Components
 
 		public void Update(IGameObject gameObject, GameTime gameTime)
 		{
-			Health = Math.Max(0, healthPoints - acceptedDamage);
 		}
 	}
 }

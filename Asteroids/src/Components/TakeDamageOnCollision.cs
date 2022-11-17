@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Asteroids.Broadcast;
 using Core;
 using Microsoft.Xna.Framework;
 
@@ -33,6 +34,15 @@ namespace Asteroids.Components
 						damagedBy.Add(provider)
 					) {
 						healthProvider.Hit(provider.Damage);
+
+						if (
+							healthProvider.Health == 0 &&
+							gameObject.TryGetComponent(out ScoreProvider scoreProvider)
+						) {
+							BroadcastService.Instance.Schedule(
+								new ScoreMessage(scoreProvider.Score)
+							);
+						}
 						break;
 					}
 				}
